@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title"></title>
+    <!-- Tailwind CSS Yükleniyor -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Ana Renk Teması: Siyah ve Turuncu */
+        :root {
+            --primary-color: #f97316; /* Tailwind orange-600 */
+            --accent-color: #fdba74; /* Tailwind orange-300 */
+            --dark-bg: #111827; /* Dark Gray/Black */
+        }
+
+        /* Hareketli Arka Plan Animasyonu */
+        @keyframes subtleGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            
+            /* Animasyonlu Arka Plan Uygulanıyor */
+            background: linear-gradient(-45deg, #111827, #2c0e00, #111827, #3c1400);
+            background-size: 400% 400%;
+            animation: subtleGlow 20s ease infinite;
+        }
+
+        /* Aydınlatmalı Etki (Glow Effect) */
+        .glow-shadow {
+            box-shadow: 0 0 15px rgba(249, 115, 22, 0.6), 0 0 5px rgba(249, 115, 22, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .glow-shadow:hover {
+            box-shadow: 0 0 25px rgba(253, 186, 116, 0.8), 0 0 10px rgba(253, 186, 116, 0.6);
+            transform: translateY(-2px);
+        }
+
+        /* Düşük Kalite Efekti (Galeride ve Detayda da uygulanıyor) */
+        .low-quality-logo {
+            /* ÇOK KALİTESİZ VE BLURRY GÖRÜNÜM */
+            filter: blur(8px) grayscale(90%); 
+            opacity: 0.7;
+            transition: filter 0.5s ease, opacity 0.5s ease;
+        }
+
+        .low-quality-logo:hover {
+            filter: blur(4px) grayscale(60%);
+            opacity: 0.8;
+        }
+
+        /* Admin Girişi için gizli yer */
+        .secret-footer-link:hover {
+            opacity: 1;
+            color: var(--accent-color);
+        }
+
+        .modal-bg {
+            background-color: rgba(0, 0, 0, 0.95);
+        }
+        
+    </style>
+</head>
+<body oncontextmenu="return false;">
+    
+    <!-- Ana İçerik Konteyneri -->
+    <div id="app" class="flex-grow p-4 md:p-8">
+        
+        <!-- Üst Kısım: Başlık ve Ayarlar -->
+        <header class="flex justify-between items-center mb-8 pb-4 border-b border-orange-600">
+            <h1 id="main-gallery-title" class="text-3xl md:text-4xl font-extrabold text-orange-400"></h1>
+            
+            <!-- Ayarlar Butonu (Sol Köşe) -->
+            <div id="settings-menu" class="relative">
+                <button onclick="toggleSettings()" class="glow-shadow bg-orange-600 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.942 3.313.823 2.306 2.306a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.942 1.543-.823 3.313-2.306 2.306a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.942-3.313-.823-2.306-2.306a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.942-1.543.823-3.313 2.306-2.306a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <span id="settings-btn-text"></span>
+                </button>
+                
+                <!-- Dil Seçenekleri Açılır Menü -->
+                <div id="settings-dropdown" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl z-50 hidden border border-orange-500">
+                    <a href="#" onclick="setLanguage('tr')" class="block px-4 py-2 text-sm text-gray-200 hover:bg-orange-600 hover:text-white rounded-t-lg">Türkçe</a>
+                    <a href="#" onclick="setLanguage('az')" class="block px-4 py-2 text-sm text-gray-200 hover:bg-orange-600 hover:text-white">Azərbaycan Dili</a>
+                    <a href="#" onclick="setLanguage('en')" class="block px-4 py-2 text-sm text-gray-200 hover:bg-orange-600 hover:text-white rounded-b-lg">English</a>
+                </div>
+            </div>
+        </header>
+
+        <!-- Logo Galerisi (Ana Ekran) -->
+        <div id="logo-gallery" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Logolar Buraya JS ile Yüklenecek -->
+        </div>
+
+        <!-- Yönetici Paneli Alanı -->
+        <div id="admin-panel" class="hidden fixed inset-0 modal-bg z-50 overflow-y-auto p-4 flex items-center justify-center">
+            <div id="admin-content" class="bg-gray-800 p-6 md:p-10 rounded-xl max-w-lg w-full glow-shadow border border-orange-700">
+                <h2 id="admin-title-text" class="text-2xl font-bold mb-6 text-orange-400"></h2>
+                
+                <form id="logo-form" onsubmit="handleLogoFormSubmission(event)" class="space-y-4">
+                    <input type="text" id="logo-name" required class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:border-orange-500 focus:ring focus:ring-orange-500/50" placeholder="Logo Adı">
+                    <textarea id="logo-desc" required class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:border-orange-500 focus:ring focus:ring-orange-500/50" rows="3" placeholder="Açıklama"></textarea>
+                    <input type="number" id="logo-price" required min="1" class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:border-orange-500 focus:ring focus:ring-orange-500/50" placeholder="Fiyat (USD)">
+                    
+                    <!-- DOSYA SEÇİMİ (Kullanıcının Bilgisayarından) -->
+                    <div>
+                        <label id="file-input-label" class="block text-sm font-medium text-gray-300 mb-2"></label>
+                        <input type="file" id="logo-file-input" accept="image/*" required class="w-full text-sm text-gray-400
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-orange-600 file:text-white
+                            hover:file:bg-orange-700
+                        ">
+                        <input type="hidden" id="selected-logo-base64">
+                    </div>
+                    <!-- DOSYA SEÇİMİ SONU -->
+
+                    <button type="submit" id="save-logo-btn" class="w-full glow-shadow bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg transition duration-200"></button>
+                    <button type="button" onclick="closeAdminPanel()" id="logout-btn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-lg transition duration-200"></button>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Logo Detay Modalı (Lightbox) -->
+        <div id="detail-modal" class="hidden fixed inset-0 modal-bg z-40 overflow-y-auto p-4 flex items-start justify-center">
+            <!-- Responsive Konteyner -->
+            <div class="relative bg-gray-800 p-4 md:p-8 rounded-xl max-w-4xl w-full my-8 glow-shadow border border-orange-700">
+                <!-- Geri Çıkma/Kapat Butonu -->
+                <button onclick="closeDetailModal()" id="back-btn" class="absolute top-4 right-4 text-gray-300 hover:text-orange-400 transition flex items-center p-2 rounded-full bg-gray-700/50 z-10">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+                
+                <h2 id="modal-title" class="text-3xl font-bold mb-6 text-orange-400 border-b border-orange-600 pb-3 pr-10"></h2>
+                
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Resim Alanı (Yüksek Kalite) -->
+                    <div class="lg:col-span-1">
+                        <!-- Responsive Image Container (Aspect Ratio: 4:3) -->
+                        <div class="relative w-full pb-[75%] mb-4">
+                            <!-- Detail image now also uses low-quality-logo class for heavy blur -->
+                            <img id="detail-image" src="" alt="Logo Detay" class="absolute inset-0 w-full h-full object-contain rounded-lg glow-shadow low-quality-logo">
+                        </div>
+                        <p id="modal-price" class="text-2xl font-extrabold text-orange-300"></p>
+                    </div>
+                    
+                    <!-- Bilgi ve Sipariş Alanı -->
+                    <div class="lg:col-span-1 space-y-4">
+                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                            <h3 id="about-heading" class="text-xl font-semibold mb-2 text-orange-400"></h3>
+                            <p id="modal-about-text" class="text-gray-300"></p>
+                        </div>
+                        
+                        <!-- Yöneticiye Özel Silme Butonu -->
+                        <button id="delete-logo-btn" onclick="confirmDelete(currentLogoId)" class="w-full glow-shadow bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg flex items-center justify-center transition duration-200 hidden">
+                             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd"></path></svg>
+                             <!-- Metin JS ile atanacak -->
+                        </button>
+
+                        <!-- WhatsApp İle Sipariş Butonu -->
+                        <button id="order-whatsapp-btn" onclick="orderViaWhatsApp()" class="w-full glow-shadow bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex items-center justify-center transition duration-200">
+                             <!-- Metin JS ile atanacak -->
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Alt Kısım: Çok Gizli Özel Giriş Yeri -->
+    <footer class="p-4 text-center">
+        <a href="#" onclick="showAdminLogin()" id="admin-login-link" class="text-gray-600 text-xs opacity-50 secret-footer-link transition duration-300"></a>
+    </footer>
+
+    <!-- Şifre Giriş Modalı -->
+    <div id="password-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center">
+        <div class="bg-gray-800 p-6 rounded-xl max-w-sm w-full glow-shadow border border-orange-700">
+            <h3 id="password-title" class="text-xl font-bold mb-4 text-orange-400"></h3>
+            <input type="password" id="admin-password" class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 mb-4 focus:border-orange-500 focus:ring focus:ring-orange-500/50" placeholder="Şifreniz">
+            <button onclick="checkPassword()" id="enter-btn" class="w-full glow-shadow bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg transition duration-200"></button>
+            <button onclick="document.getElementById('password-modal').classList.add('hidden')" id="cancel-btn" class="w-full mt-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-lg transition duration-200"></button>
+        </div>
+    </div>
+    
+    <!-- Custom Alert/Message Modal -->
+    <div id="message-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center">
+        <div class="bg-gray-800 p-6 rounded-xl max-w-xs w-full glow-shadow border border-orange-700">
+            <p id="message-text" class="text-white text-center mb-4"></p>
+            <button onclick="closeMessageModal()" id="message-ok-btn" class="w-full glow-shadow bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg transition duration-200"></button>
+        </div>
+    </div>
+    
+    <!-- Custom Confirm Modal for Deletion -->
+    <div id="confirm-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center">
+        <div class="bg-gray-800 p-6 rounded-xl max-w-xs w-full glow-shadow border border-orange-700">
+            <p id="confirm-text" class="text-white text-center mb-4">Bu logoyu silmek istediğinizden emin misiniz?</p>
+            <div class="flex justify-between space-x-4">
+                <button onclick="executeDelete()" id="confirm-yes-btn" class="flex-1 glow-shadow bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition duration-200">Evet, Sil</button>
+                <button onclick="closeConfirmModal()" id="confirm-no-btn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 rounded-lg transition duration-200">İptal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Alanı -->
+    <script type="module">
+        // Firebase Modülleri İçe Aktarılıyor
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, collection, query, onSnapshot, setDoc, addDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firestore Debug loglarını etkinleştir
+        setLogLevel('debug');
+        
+        // --- Sabitler ve Global Değişkenler ---
+        const WHATSAPP_NUMBER = '994707841414';
+        const ADMIN_PASSWORD = '1975';
+        
+        let firebaseApp;
+        let db;
+        let auth;
+        let appId;
+        let logoData = []; // Gerçek zamanlı olarak Firestore'dan güncellenen logolar
+        let currentLogoId = null;
+        let isAdminLoggedIn = false; // Admin giriş durumu takip ediliyor (Yerel)
+
+
+        const LANGUAGES = {
+            'tr': {
+                title: 'MuLogo Dijital Galeri', // SAYFA BAŞLIĞI GÜNCELLENDİ
+                settings: 'Ayarlar',
+                main_gallery: 'MuLogo', // ANA BAŞLIK GÜNCELLENDİ
+                detail_title: 'Logo Detayı',
+                about: 'Açıklama',
+                price: 'Fiyat',
+                add_to_cart: 'WhatsApp İle Sipariş Et',
+                view_details: 'Detaylı Görseller',
+                delete_logo: 'Logoyu Sil',
+                back: 'Kapat',
+                admin_login: 'Özel Giriş Yeri',
+                admin_title: 'Yönetici Paneli (Yeni Logo Ekle)',
+                password: 'Şifre',
+                enter: 'Giriş Yap',
+                add_logo: 'Yeni Logo Ekle',
+                logo_name: 'Logo Adı',
+                logo_desc: 'Açıklama',
+                logo_price: 'Fiyat (USD)',
+                file_input_label: 'Bilgisayarınızdan Görsel Seçin (JPG/PNG)',
+                save: 'Kaydet',
+                logout: 'Çıkış Yap',
+                placeholder_detail_desc: 'Bu logo, marka kimliğinizi yansıtacak şekilde titizlikle hazırlanmıştır.',
+                cancel: 'İptal',
+                ok_button: 'Tamam',
+                alert_password_fail: 'Hatalı Şifre!',
+                alert_logo_added: 'Logo başarıyla eklendi ve tüm kullanıcılara görünüyor!',
+                alert_logo_deleted: 'Logo başarıyla silindi ve tüm kullanıcılardan kaldırıldı!',
+                alert_no_logo: 'Gösterilecek logo bulunamadı.',
+                alert_no_file: 'Lütfen bir resim dosyası seçin.',
+                confirm_delete_text: 'Bu logoyu kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
+                yes_delete: 'Evet, Sil',
+                no_cancel: 'İptal'
+            },
+            'az': {
+                title: 'Rəqəmsal Sənət Qalereyası',
+                settings: 'Tənzimləmələr',
+                main_gallery: 'Loqo Qalereyası',
+                detail_title: 'Loqo Təfərrüatı',
+                about: 'Təsvir',
+                price: 'Qiymət',
+                add_to_cart: 'WhatsApp İlə Sifariş Et',
+                view_details: 'Ətraflı Şəkillər',
+                delete_logo: 'Loqonu Sil',
+                back: 'Bağla',
+                admin_login: 'Xüsusi Giriş Yeri',
+                admin_title: 'İdarəetmə Paneli (Yeni Loqo Əlavə Et)',
+                password: 'Parol',
+                enter: 'Daxil Ol',
+                add_logo: 'Yeni Loqo Əlavə Et',
+                logo_name: 'Loqo Adı',
+                logo_desc: 'Təsvir',
+                logo_price: 'Qiymət (USD)',
+                file_input_label: 'Kompüterinizdən Şəkil Seçin (JPG/PNG)',
+                save: 'Yadda Saxla',
+                logout: 'Çıxış Et',
+                placeholder_detail_desc: 'Bu loqo, marka şəxsiyyətinizi əks etdirmək üçün diqqətlə hazırlanmışdır.',
+                cancel: 'Ləğv Et',
+                ok_button: 'Oldu',
+                alert_password_fail: 'Səhv Parol!',
+                alert_logo_added: 'Loqo uğurla əlavə edildi və bütün istifadəçilərə görünür!',
+                alert_logo_deleted: 'Loqo uğurla silindi və bütün istifadəçilərdən silindi!',
+                alert_no_logo: 'Göstəriləcək loqo tapılmadı.',
+                alert_no_file: 'Zəhmət olmasa bir şəkil faylı seçin.',
+                confirm_delete_text: 'Bu loqonu birdəfəlik silmək istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz.',
+                yes_delete: 'Bəli, Sil',
+                no_cancel: 'Ləğv Et'
+            },
+            'en': {
+                title: 'Digital Art Gallery',
+                settings: 'Settings',
+                main_gallery: 'Logo Gallery',
+                detail_title: 'Logo Details',
+                about: 'Description',
+                price: 'Price',
+                add_to_cart: 'Order via WhatsApp',
+                view_details: 'Detailed Images',
+                delete_logo: 'Delete Logo',
+                back: 'Close',
+                admin_login: 'Special Entry Area',
+                admin_title: 'Admin Panel (Add New Logo)',
+                password: 'Password',
+                enter: 'Enter',
+                add_logo: 'Add New Logo',
+                logo_name: 'Logo Name',
+                logo_desc: 'Description',
+                logo_price: 'Price (USD)',
+                file_input_label: 'Select Image from your Computer (JPG/PNG)',
+                save: 'Save',
+                logout: 'Logout',
+                placeholder_detail_desc: 'This logo was meticulously crafted to reflect your brand identity.',
+                cancel: 'Cancel',
+                ok_button: 'OK',
+                alert_password_fail: 'Wrong Password!',
+                alert_logo_added: 'Logo successfully added and is visible to all users!',
+                alert_logo_deleted: 'Logo successfully deleted and removed from all users!',
+                alert_no_logo: 'No logos found to display.',
+                alert_no_file: 'Please select an image file.',
+                confirm_delete_text: 'Are you sure you want to permanently delete this logo? This action cannot be undone.',
+                yes_delete: 'Yes, Delete',
+                no_cancel: 'Cancel'
+            }
+        };
+
+        let currentLang = localStorage.getItem('siteLang') || 'tr';
+        let translations = LANGUAGES[currentLang];
+
+        // --- Firebase İstemci Kurulumu ---
+        async function setupFirebase() {
+            try {
+                // Global değişkenler zorunludur
+                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+
+                firebaseApp = initializeApp(firebaseConfig);
+                db = getFirestore(firebaseApp);
+                auth = getAuth(firebaseApp);
+
+                // Oturum Açma
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                // Firestore dinleyicisini başlat
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                         listenForLogos();
+                    } else {
+                        // Eğer auth yoksa bile anonim giriş başarılı olmuştur, dinlemeye başla
+                         listenForLogos(); 
+                    }
+                });
+
+            } catch (error) {
+                console.error("Firebase kurulumu veya kimlik doğrulama başarısız:", error);
+                // Hata durumunda bile varsayılan logoyu göster (veri yoksa)
+                renderLogos([]); 
+            }
+        }
+
+        // --- Firestore Veri Dinleyicisi (onSnapshot) ---
+        function listenForLogos() {
+            const logosCollectionRef = collection(db, "artifacts", appId, "public", "data", "logos");
+            const q = query(logosCollectionRef);
+
+            // Gerçek zamanlı dinleyiciyi başlat
+            onSnapshot(q, (snapshot) => {
+                logoData = [];
+                snapshot.forEach((doc) => {
+                    logoData.push({ id: doc.id, ...doc.data() });
+                });
+                renderLogos(logoData); // Veri değiştikçe galeriyi yeniden çiz
+            }, (error) => {
+                console.error("Firestore verilerini dinlerken hata oluştu:", error);
+                showMessageModal('alert_no_logo'); 
+            });
+        }
+
+
+        // --- Mesaj ve Onay Modalı Fonksiyonları ---
+        function showMessageModal(messageKey) {
+            document.getElementById('message-text').textContent = translations[messageKey];
+            document.getElementById('message-ok-btn').textContent = translations.ok_button;
+            document.getElementById('message-modal').classList.remove('hidden');
+        }
+
+        function closeMessageModal() {
+            document.getElementById('message-modal').classList.add('hidden');
+        }
+        
+        function confirmDelete(id) {
+            if (!isAdminLoggedIn) return;
+            currentLogoId = id;
+            document.getElementById('confirm-text').textContent = translations.confirm_delete_text;
+            document.getElementById('confirm-yes-btn').textContent = translations.yes_delete;
+            document.getElementById('confirm-no-btn').textContent = translations.no_cancel;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        }
+
+        function closeConfirmModal() {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            currentLogoId = null;
+        }
+
+        async function executeDelete() {
+            closeConfirmModal();
+            if (!isAdminLoggedIn || !currentLogoId || !db) return;
+
+            try {
+                await deleteDoc(doc(db, "artifacts", appId, "public", "data", "logos", currentLogoId));
+                showMessageModal('alert_logo_deleted');
+                closeDetailModal();
+                currentLogoId = null;
+            } catch (error) {
+                console.error("Logo silinirken hata oluştu:", error);
+                showMessageModal('alert_no_logo'); // Hata mesajı gösterimi için geçici anahtar
+            }
+        }
+
+
+        // --- Dil Yönetimi Fonksiyonları ---
+
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('siteLang', lang);
+            translations = LANGUAGES[currentLang];
+            applyTranslations();
+            renderLogos(logoData); // Firebase'den gelen veriyi yeniden çiz
+        }
+
+        function applyTranslations() {
+            document.getElementById('page-title').textContent = translations.title;
+            document.getElementById('settings-btn-text').textContent = translations.settings;
+            document.getElementById('main-gallery-title').textContent = translations.main_gallery;
+            document.getElementById('admin-login-link').textContent = translations.admin_login;
+            document.getElementById('message-ok-btn').textContent = translations.ok_button;
+
+            // Admin Panel
+            document.getElementById('admin-title-text').textContent = translations.admin_title;
+            document.getElementById('logo-form').querySelector('#logo-name').placeholder = translations.logo_name;
+            document.getElementById('logo-form').querySelector('#logo-desc').placeholder = translations.logo_desc;
+            document.getElementById('logo-form').querySelector('#logo-price').placeholder = translations.logo_price;
+            document.getElementById('file-input-label').textContent = translations.file_input_label;
+            document.getElementById('save-logo-btn').textContent = translations.save;
+            document.getElementById('logout-btn').textContent = translations.logout;
+
+            // Password Modal
+            document.getElementById('password-title').textContent = translations.password;
+            document.getElementById('enter-btn').textContent = translations.enter;
+            document.getElementById('cancel-btn').textContent = translations.cancel;
+            
+            // Delete Butonu Metni
+            document.getElementById('delete-logo-btn').textContent = translations.delete_logo;
+            document.getElementById('order-whatsapp-btn').textContent = translations.add_to_cart;
+            document.getElementById('about-heading').textContent = translations.about;
+        }
+
+        function toggleSettings() {
+            document.getElementById('settings-dropdown').classList.toggle('hidden');
+        }
+
+        // --- Galeri Render Fonksiyonu ---
+
+        function renderLogos(logos) {
+            const gallery = document.getElementById('logo-gallery');
+            gallery.innerHTML = '';
+
+            if (logos.length === 0) {
+                gallery.innerHTML = `<p class="col-span-full text-center text-gray-500 mt-10">${translations.alert_no_logo}</p>`;
+                return;
+            }
+
+            logos.forEach(logo => {
+                const logoCard = document.createElement('div');
+                logoCard.className = 'bg-gray-800 rounded-xl overflow-hidden cursor-pointer glow-shadow transition duration-300 transform hover:scale-[1.02]';
+                logoCard.onclick = () => showDetailModal(logo.id);
+                
+                logoCard.innerHTML = `
+                    <div class="h-40 overflow-hidden">
+                        <!-- low-quality-logo class is applied here for heavy blur -->
+                        <img src="${logo.url}" alt="${logo.name}" class="w-full h-full object-cover low-quality-logo">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-lg font-bold truncate text-orange-300">${logo.name}</h3>
+                        <p class="text-sm text-gray-400 mt-1">${translations.price}: $${logo.price}</p>
+                    </div>
+                `;
+                gallery.appendChild(logoCard);
+            });
+        }
+
+        // --- Detay Modalı Fonksiyonları ---
+
+        function showDetailModal(id) {
+            const logo = logoData.find(l => l.id === id); // logoData global state'i kullan
+            if (!logo) return;
+            
+            currentLogoId = id;
+
+            document.getElementById('modal-title').textContent = logo.name;
+            
+            // low-quality-logo class'ı detay resimde de uygulanıyor
+            document.getElementById('detail-image').src = logo.url; 
+            document.getElementById('modal-price').textContent = `${translations.price}: $${logo.price}`;
+            
+            // Metinler
+            document.getElementById('modal-about-text').textContent = logo.detail_desc || translations.placeholder_detail_desc;
+            
+            // Silme Butonu Görünürlüğü (Sadece Yönetici Girişi Yapılmışsa)
+            const deleteBtn = document.getElementById('delete-logo-btn');
+            if (isAdminLoggedIn) {
+                deleteBtn.classList.remove('hidden');
+            } else {
+                deleteBtn.classList.add('hidden');
+            }
+            deleteBtn.textContent = translations.delete_logo;
+            
+            document.getElementById('order-whatsapp-btn').textContent = translations.add_to_cart;
+            document.getElementById('detail-modal').classList.remove('hidden');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detail-modal').classList.add('hidden');
+            currentLogoId = null;
+        }
+
+        // --- WhatsApp Sipariş Fonksiyonu ---
+        
+        function orderViaWhatsApp() {
+            if (!currentLogoId) return;
+            const logo = logoData.find(l => l.id === currentLogoId);
+            if (!logo) return;
+
+            const message = encodeURIComponent(
+                `${translations.add_to_cart}!\n\n` +
+                `${translations.logo_name}: ${logo.name}\n` +
+                `${translations.price}: $${logo.price}\n\n` +
+                `Lütfen bu logo hakkında detaylı bilgi ve satın alma süreci için bana yardımcı olun.`
+            );
+
+            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
+            window.open(waLink, '_blank');
+        }
+
+        // --- Yönetici Paneli Fonksiyonları ---
+
+        function showAdminLogin() {
+            document.getElementById('password-modal').classList.remove('hidden');
+            return false;
+        }
+
+        function checkPassword() {
+            const input = document.getElementById('admin-password');
+            if (input.value === ADMIN_PASSWORD) {
+                isAdminLoggedIn = true; // Admin girişini kaydet
+                document.getElementById('password-modal').classList.add('hidden');
+                document.getElementById('admin-password').value = '';
+                openAdminPanel();
+            } else {
+                isAdminLoggedIn = false;
+                showMessageModal('alert_password_fail');
+                input.value = '';
+            }
+        }
+
+        function openAdminPanel() {
+            document.getElementById('admin-panel').classList.remove('hidden');
+            document.getElementById('logo-form').reset();
+            // Logo file input'unu zorunlu yap, aksi takdirde dosya seçilmezse hata verir.
+            document.getElementById('logo-file-input').required = true;
+        }
+
+        function closeAdminPanel() {
+            isAdminLoggedIn = false; // Çıkış yapıldığında admin durumunu sıfırla
+            document.getElementById('admin-panel').classList.add('hidden');
+        }
+
+        // --- Dosya Yükleme ve Firestore Kaydı ---
+        
+        function handleLogoFormSubmission(event) {
+            event.preventDefault();
+            
+            const fileInput = document.getElementById('logo-file-input');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                 showMessageModal('alert_no_file');
+                 return;
+            }
+
+            const reader = new FileReader();
+            
+            reader.onloadend = function() {
+                const base64Image = reader.result;
+                addLogo(base64Image);
+            };
+
+            reader.onerror = function() {
+                console.error("Dosya okuma hatası.");
+                showMessageModal('alert_no_file'); 
+            };
+
+            reader.readAsDataURL(file); // Dosyayı Base64 formatına çevir
+        }
+
+
+        async function addLogo(base64Image) {
+            if (!db) return; // DB yoksa çık
+
+            const name = document.getElementById('logo-name').value;
+            const desc = document.getElementById('logo-desc').value;
+            const price = parseFloat(document.getElementById('logo-price').value);
+            
+            const newLogo = {
+                name,
+                desc,
+                price,
+                // Base64 veri, hem düşük (galeri) hem de yüksek (detay) kalitede kullanılıyor.
+                url: base64Image,
+                detail_url: base64Image, 
+                detail_desc: desc,
+                createdAt: new Date().toISOString()
+            };
+
+            try {
+                // Firestore'a ekle (otomatik ID al)
+                const logosCollectionRef = collection(db, "artifacts", appId, "public", "data", "logos");
+                await addDoc(logosCollectionRef, newLogo);
+
+                showMessageModal('alert_logo_added');
+                closeAdminPanel();
+                // renderLogos onSnapshot tarafından otomatik olarak çağrılacak
+            } catch (error) {
+                console.error("Logoyu Firestore'a eklerken hata oluştu:", error);
+                // Kullanıcıya genel bir hata mesajı göstermek için
+                showMessageModal('alert_no_logo'); 
+            }
+        }
+
+        // --- Dışa Aktarılan Fonksiyonlar (HTML ile etkileşim için) ---
+        // Bu fonksiyonlar, modül içinden window nesnesine eklenerek HTML'deki onclick gibi event handler'ların erişimine açılır.
+        window.toggleSettings = toggleSettings;
+        window.setLanguage = setLanguage;
+        window.handleLogoFormSubmission = handleLogoFormSubmission;
+        window.closeAdminPanel = closeAdminPanel;
+        window.closeDetailModal = closeDetailModal;
+        window.orderViaWhatsApp = orderViaWhatsApp;
+        window.showAdminLogin = showAdminLogin;
+        window.checkPassword = checkPassword;
+        window.closeMessageModal = closeMessageModal;
+        window.confirmDelete = confirmDelete;
+        window.closeConfirmModal = closeConfirmModal;
+        window.executeDelete = executeDelete;
+
+        // --- Başlangıç Fonksiyonu ---
+
+        window.onload = function() {
+            applyTranslations();
+            setupFirebase(); // Firebase kurulumunu başlat
+            // renderLogos, Firebase onSnapshot tarafından çağrılacaktır.
+        };
+
+    </script>
+</body>
+</html>
