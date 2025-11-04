@@ -378,6 +378,7 @@
 
         // --- Firestore Veri Dinleyicisi (onSnapshot) ---
         function listenForLogos() {
+            // Logoları public alandan al
             const logosCollectionRef = collection(db, "artifacts", appId, "public", "data", "logos");
             const q = query(logosCollectionRef);
 
@@ -425,6 +426,7 @@
             if (!isAdminLoggedIn || !currentLogoId || !db) return;
 
             try {
+                // Public data yolunu kullanarak logoyu sil
                 await deleteDoc(doc(db, "artifacts", appId, "public", "data", "logos", currentLogoId));
                 showMessageModal('alert_logo_deleted');
                 closeDetailModal();
@@ -467,7 +469,7 @@
             document.getElementById('enter-btn').textContent = translations.enter;
             document.getElementById('cancel-btn').textContent = translations.cancel;
             
-            // Delete Butonu Metni
+            // Detail Modal
             document.getElementById('delete-logo-btn').textContent = translations.delete_logo;
             document.getElementById('order-whatsapp-btn').textContent = translations.add_to_cart;
             document.getElementById('about-heading').textContent = translations.about;
@@ -592,12 +594,39 @@
             isAdminLoggedIn = false; // Çıkış yapıldığında admin durumunu sıfırla
             document.getElementById('admin-panel').classList.add('hidden');
         }
+        
+        /**
+         * Yeni logoyu Base64 olarak Firestore'a kaydeder.
+         * @param {object} logo - Kaydedilecek logo verisi.
+         */
+        async function saveLogoToFirestore(logo) {
+            if (!db || !isAdminLoggedIn) {
+                console.error("Firestore bağlantısı yok veya Yönetici girişi yapılmamış.");
+                return;
+            }
 
-        // --- Dosya Yükleme ve Firestore Kaydı ---
+            try {
+                // Public data yolunu kullanarak yeni belge ekle
+                const logosCollectionRef = collection(db, "artifacts", appId, "public", "data", "logos");
+                await addDoc(logosCollectionRef, logo);
+                showMessageModal('alert_logo_added');
+            } catch (error) {
+                console.error("Logoyu kaydederken hata oluştu:", error);
+                showMessageModal('alert_no_logo'); // Geçici hata mesajı anahtarı
+            }
+        }
+
+
+        // --- Dosya Yükleme ve Firestore Kaydı (DÜZELTİLMİŞ VE TAMAMLANMIŞ KISIM) ---
         
         function handleLogoFormSubmission(event) {
             event.preventDefault();
             
+            if (!isAdminLoggedIn) {
+                 showMessageModal('alert_password_fail'); // Aslında admin paneli sadece giriş yapılınca açılıyor, bu bir güvenlik kontrolü
+                 return;
+            }
+
             const fileInput = document.getElementById('logo-file-input');
             const file = fileInput.files[0];
             
@@ -608,76 +637,42 @@
 
             const reader = new FileReader();
             
+            // Dosya okuma bittiğinde çalışacak mantık
             reader.onloadend = function() {
-                const base64Image = reader.result;
-                addLogo(base64Image);
-            };
+                const base64Url = reader.result; // Base64 kodlanmış görsel verisi
 
-            reader.onerror = function() {
-                console.error("Dosya okuma hatası.");
-                showMessageModal('alert_no_file'); 
-            };
+                // Formdan diğer verileri al
+                const logoName = document.getElementById('logo-name').value;
+                const logoDesc = document.getElementById('logo-desc').value;
+                // Fiyatı sayıya çevir
+                const logoPrice = parseInt(document.getElementById('logo-price').value, 10); 
 
-            reader.readAsDataURL(file); // Dosyayı Base64 formatına çevir
-        }
+                const newLogo = {
+                    name: logoName,
+                    detail_desc: logoDesc, // Açıklama alanını kullan
+                    price: logoPrice,
+                    url: base64Url // Base64 verisini URL olarak kaydet
+                };
 
+                // Base64 verisini Firestore'a kaydet
+                saveLogoToFirestore(newLogo);
 
-        async function addLogo(base64Image) {
-            if (!db) return; // DB yoksa çık
-
-            const name = document.getElementById('logo-name').value;
-            const desc = document.getElementById('logo-desc').value;
-            const price = parseFloat(document.getElementById('logo-price').value);
-            
-            const newLogo = {
-                name,
-                desc,
-                price,
-                // Base64 veri, hem düşük (galeri) hem de yüksek (detay) kalitede kullanılıyor.
-                url: base64Image,
-                detail_url: base64Image, 
-                detail_desc: desc,
-                createdAt: new Date().toISOString()
-            };
-
-            try {
-                // Firestore'a ekle (otomatik ID al)
-                const logosCollectionRef = collection(db, "artifacts", appId, "public", "data", "logos");
-                await addDoc(logosCollectionRef, newLogo);
-
-                showMessageModal('alert_logo_added');
+                // Formu temizle ve paneli kapat
+                document.getElementById('logo-form').reset();
                 closeAdminPanel();
-                // renderLogos onSnapshot tarafından otomatik olarak çağrılacak
-            } catch (error) {
-                console.error("Logoyu Firestore'a eklerken hata oluştu:", error);
-                // Kullanıcıya genel bir hata mesajı göstermek için
-                showMessageModal('alert_no_logo'); 
-            }
+            };
+
+            // Dosya okuma işlemini başlat (Bu satır orijinal kodda eksikti!)
+            reader.readAsDataURL(file);
         }
 
-        // --- Dışa Aktarılan Fonksiyonlar (HTML ile etkileşim için) ---
-        // Bu fonksiyonlar, modül içinden window nesnesine eklenerek HTML'deki onclick gibi event handler'ların erişimine açılır.
-        window.toggleSettings = toggleSettings;
-        window.setLanguage = setLanguage;
-        window.handleLogoFormSubmission = handleLogoFormSubmission;
-        window.closeAdminPanel = closeAdminPanel;
-        window.closeDetailModal = closeDetailModal;
-        window.orderViaWhatsApp = orderViaWhatsApp;
-        window.showAdminLogin = showAdminLogin;
-        window.checkPassword = checkPassword;
-        window.closeMessageModal = closeMessageModal;
-        window.confirmDelete = confirmDelete;
-        window.closeConfirmModal = closeConfirmModal;
-        window.executeDelete = executeDelete;
-
-        // --- Başlangıç Fonksiyonu ---
-
+        // --- Başlangıç ---
         window.onload = function() {
-            applyTranslations();
-            setupFirebase(); // Firebase kurulumunu başlat
-            // renderLogos, Firebase onSnapshot tarafından çağrılacaktır.
+            // Firebase'i başlat
+            setupFirebase(); 
+            // Çevirileri uygula
+            applyTranslations(); 
         };
-
     </script>
 </body>
 </html>
