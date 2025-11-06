@@ -3,620 +3,819 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="page-title"></title>
-    <!-- Tailwind CSS Yükleniyor -->
+    <title data-lang-key="pageTitle">MuLogo | Eşsiz Logo Tasarımları</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
     <style>
-        /* Ana Renk Teması: Siyah ve Turuncu */
-        :root {
-            --primary-color: #f97316; /* Tailwind orange-600 */
-            --accent-color: #fdba74; /* Tailwind orange-300 */
-            --dark-bg: #111827; /* Dark Gray/Black */
-        }
-
-        /* Hareketli Arka Plan Animasyonu */
-        @keyframes subtleGlow {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
         body {
             font-family: 'Inter', sans-serif;
-            color: white;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            
-            /* Animasyonlu Arka Plan Uygulanıyor */
-            background: linear-gradient(-45deg, #111827, #2c0e00, #111827, #3c1400);
-            background-size: 400% 400%;
-            animation: subtleGlow 20s ease infinite;
+            background-color: #0d0d0d;
         }
+        .text-custom-blue { color: #60a5fa; } 
+        .bg-custom-blue { background-color: #3b82f6; } 
+        .hover\:bg-custom-blue-dark:hover { background-color: #2563eb; }
 
-        /* Aydınlatmalı Etki (Glow Effect) */
-        .glow-shadow {
-            box-shadow: 0 0 15px rgba(249, 115, 22, 0.6), 0 0 5px rgba(249, 115, 22, 0.4);
-            transition: all 0.3s ease-in-out;
+        .glow-effect {
+            box-shadow: 0 0 20px rgba(96, 165, 250, 0.7), 0 0 40px rgba(96, 165, 250, 0.4);
+            transition: all 0.4s ease-in-out;
         }
-
-        .glow-shadow:hover {
-            box-shadow: 0 0 25px rgba(253, 186, 116, 0.8), 0 0 10px rgba(253, 186, 116, 0.6);
+        .glow-effect:hover {
+            box-shadow: 0 0 30px rgba(96, 165, 250, 0.9), 0 0 60px rgba(96, 165, 250, 0.6);
             transform: translateY(-2px);
         }
-
-        /* Düşük Kalite Efekti (Galeride ve Detayda da uygulanıyor) */
-        .low-quality-logo {
-            /* ÇOK KALİTESİZ VE BLURRY GÖRÜNÜM */
-            filter: blur(8px) grayscale(90%); 
-            opacity: 0.7;
-            transition: filter 0.5s ease, opacity 0.5s ease;
+        .logo-card {
+            background-color: rgba(17, 24, 39, 0.7);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+        .logo-card:hover {
+            border-color: rgba(96, 165, 250, 0.7);
         }
 
-        .low-quality-logo:hover {
-            filter: blur(4px) grayscale(60%);
-            opacity: 0.8;
+        /* Scrollbar stilleri */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: #1a202c; }
+        ::-webkit-scrollbar-thumb { background: #60a5fa; border-radius: 5px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+
+        /* WhatsApp İkonu */
+        .whatsapp-icon {
+            fill: white;
+            transition: transform 0.3s ease;
+        }
+        .whatsapp-button:hover .whatsapp-icon {
+            transform: rotate(10deg) scale(1.05);
         }
 
-        /* Admin Girişi için gizli yer */
-        .secret-footer-link:hover {
-            opacity: 1;
-            color: var(--accent-color);
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
         }
-
-        .modal-bg {
-            background-color: rgba(0, 0, 0, 0.95);
-        }
-        
+        .animate-blob { animation: blob 7s infinite; }
+        .animation-delay-2000 { animation-delay: 2s; }
+        .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body oncontextmenu="return false;">
-    
-    <!-- Ana İçerik Konteyneri -->
-    <div id="app" class="flex-grow p-4 md:p-8">
-        
-        <!-- Üst Kısım: Başlık ve Ayarlar -->
-        <header class="flex justify-between items-center mb-8 pb-4 border-b border-orange-600">
-            <h1 id="main-gallery-title" class="text-3xl md:text-4xl font-extrabold text-orange-400"></h1>
+<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+
+    <!-- Ana Sayfa Menüsü (Header) -->
+    <header class="bg-black/70 shadow-lg sticky top-0 z-20 backdrop-blur-sm border-b border-custom-blue/30">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
             
-            <!-- Ayarlar Butonu (Sol Köşe) -->
-            <div id="settings-menu" class="relative">
-                <button onclick="toggleSettings()" class="glow-shadow bg-orange-600 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.942 3.313.823 2.306 2.306a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.942 1.543-.823 3.313-2.306 2.306a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.942-3.313-.823-2.306-2.306a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-                    <span id="settings-btn-text"></span>
-                </button>
-                
-                <!-- Dil Seçenekleri Açılır Menü -->
-                <div id="settings-dropdown" class="absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-xl z-50 hidden border border-orange-500">
-                    <a href="#" onclick="setLanguage('tr')" class="block px-4 py-2 text-sm text-gray-200 hover:bg-orange-600 hover:text-white rounded-t-lg">Türkçe</a>
-                    <a href="#" onclick="setLanguage('az')" class="block px-4 py-2 text-sm text-gray-200 hover:bg-orange-600 hover:text-white">Azərbaycan Dili</a>
-                    <a href="#" onclick="setLanguage('en')" class="block px-4 py-2 text-sm text-gray-200 hover:bg-orange-600 hover:text-white rounded-b-lg">English</a>
+            <a href="#" class="text-4xl font-extrabold tracking-tight text-custom-blue">
+                <span class="p-1 rounded-lg glow-effect">MuLogo</span>
+            </a>
+            
+            <nav class="space-x-8 hidden md:flex">
+                <a href="#tanitim" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navHome">Anasayfa</a>
+                <a href="#galeri" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navLogos">Logolarımız</a>
+                <a href="#hakkimizda" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navAbout">Hakkımızda</a>
+                <a href="#iletisim" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navContact">İletişim</a>
+            </nav>
+
+            <!-- Dil Seçici -->
+            <div class="flex items-center space-x-3">
+                <div id="languageSelector" class="flex space-x-2">
+                    <button class="lang-btn" data-lang="tr" title="Türkçe">
+                        <img src="https://flagcdn.com/w20/tr.png" srcset="https://flagcdn.com/w40/tr.png 2x" width="20" alt="Türkçe" class="rounded shadow-md ring-2 ring-custom-blue/50">
+                    </button>
+                    <button class="lang-btn" data-lang="az" title="Azerbaycanca">
+                        <img src="https://flagcdn.com/w20/az.png" srcset="https://flagcdn.com/w40/az.png 2x" width="20" alt="Azerbaycanca" class="rounded shadow-md ring-2 ring-custom-blue/50">
+                    </button>
+                    <button class="lang-btn" data-lang="en" title="English">
+                        <img src="https://flagcdn.com/w20/us.png" srcset="https://flagcdn.com/w40/us.png 2x" width="20" alt="English" class="rounded shadow-md ring-2 ring-custom-blue/50">
+                    </button>
                 </div>
-            </div>
-        </header>
-
-        <!-- Logo Galerisi (Ana Ekran) -->
-        <div id="logo-gallery" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
-            <!-- Logolar Buraya JS ile Yüklenecek -->
-        </div>
-
-        <!-- Yönetici Paneli Alanı -->
-        <div id="admin-panel" class="hidden fixed inset-0 modal-bg z-50 overflow-y-auto p-4 flex items-center justify-center">
-            <div id="admin-content" class="bg-gray-800 p-6 md:p-10 rounded-xl max-w-lg w-full glow-shadow border border-orange-700">
-                <h2 id="admin-title-text" class="text-2xl font-bold mb-6 text-orange-400"></h2>
                 
-                <form id="logo-form" onsubmit="handleLogoFormSubmission(event)" class="space-y-4">
-                    <input type="text" id="logo-name" required class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:border-orange-500 focus:ring focus:ring-orange-500/50" placeholder="Logo Adı">
-                    <textarea id="logo-desc" required class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:border-orange-500 focus:ring focus:ring-orange-500/50" rows="3" placeholder="Açıklama"></textarea>
-                    <input type="number" id="logo-price" required min="1" class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 focus:border-orange-500 focus:ring focus:ring-orange-500/50" placeholder="Fiyat (USD)">
-                    
-                    <!-- DOSYA SEÇİMİ (Kullanıcının Bilgisayarından) -->
-                    <div>
-                        <label id="file-input-label" class="block text-sm font-medium text-gray-300 mb-2"></label>
-                        <input type="file" id="logo-file-input" accept="image/*" required class="w-full text-sm text-gray-400
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-full file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-orange-600 file:text-white
-                            hover:file:bg-orange-700
-                        ">
-                        <input type="hidden" id="selected-logo-base64">
-                    </div>
-                    <!-- DOSYA SEÇİMİ SONU -->
+                <button id="cartButton" class="relative p-2 bg-gray-700 text-custom-blue rounded-lg hover:bg-gray-600 transition duration-300" data-lang-key="btnCart" title="Sepetim">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"></path></svg>
+                    <span id="cartCount" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                </button>
 
-                    <button type="submit" id="save-logo-btn" class="w-full glow-shadow bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg transition duration-200"></button>
-                    <button type="button" onclick="closeAdminPanel()" id="logout-btn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-lg transition duration-200"></button>
-                </form>
+                <button id="mobileMenuButton" class="md:hidden p-2 bg-gray-700 text-custom-blue rounded-lg hover:bg-gray-600 transition duration-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
             </div>
         </div>
         
-        <!-- Logo Detay Modalı (Lightbox) -->
-        <div id="detail-modal" class="hidden fixed inset-0 modal-bg z-40 overflow-y-auto p-4 flex items-start justify-center">
-            <!-- Responsive Konteyner -->
-            <div class="relative bg-gray-800 p-4 md:p-8 rounded-xl max-w-4xl w-full my-8 glow-shadow border border-orange-700">
-                <!-- Geri Çıkma/Kapat Butonu -->
-                <button onclick="closeDetailModal()" id="back-btn" class="absolute top-4 right-4 text-gray-300 hover:text-orange-400 transition flex items-center p-2 rounded-full bg-gray-700/50 z-10">
-                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-                
-                <h2 id="modal-title" class="text-3xl font-bold mb-6 text-orange-400 border-b border-orange-600 pb-3 pr-10"></h2>
-                
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Resim Alanı (Yüksek Kalite) -->
-                    <div class="lg:col-span-1">
-                        <!-- Responsive Image Container (Aspect Ratio: 4:3) -->
-                        <div class="relative w-full pb-[75%] mb-4">
-                            <!-- Detail image now also uses low-quality-logo class for heavy blur -->
-                            <img id="detail-image" src="" alt="Logo Detay" class="absolute inset-0 w-full h-full object-contain rounded-lg glow-shadow low-quality-logo">
-                        </div>
-                        <p id="modal-price" class="text-2xl font-extrabold text-orange-300"></p>
-                    </div>
-                    
-                    <!-- Bilgi ve Sipariş Alanı -->
-                    <div class="lg:col-span-1 space-y-4">
-                        <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
-                            <h3 id="about-heading" class="text-xl font-semibold mb-2 text-orange-400"></h3>
-                            <p id="modal-about-text" class="text-gray-300"></p>
-                        </div>
-                        
-                        <!-- Yöneticiye Özel Silme Butonu -->
-                        <button id="delete-logo-btn" onclick="confirmDelete(currentLogoId)" class="w-full glow-shadow bg-red-600 hover:bg-red-700 text-white font-bold py-3 rounded-lg flex items-center justify-center transition duration-200 hidden">
-                             <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd"></path></svg>
-                             <!-- Metin JS ile atanacak -->
-                        </button>
+        <div id="mobileMenu" class="md:hidden hidden bg-black/90 pb-4">
+            <nav class="flex flex-col items-center space-y-4 py-4">
+                <a href="#tanitim" class="text-gray-300 hover:text-custom-blue transition duration-300 text-lg" data-lang-key="navHome">Anasayfa</a>
+                <a href="#galeri" class="text-gray-300 hover:text-custom-blue transition duration-300 text-lg" data-lang-key="navLogos">Logolarımız</a>
+                <a href="#hakkimizda" class="text-gray-300 hover:text-custom-blue transition duration-300 text-lg" data-lang-key="navAbout">Hakkımızda</a>
+                <a href="#iletisim" class="text-gray-300 hover:text-custom-blue transition duration-300 text-lg" data-lang-key="navContact">İletişim</a>
+                <button id="adminLoginLinkMobile" class="text-gray-500 hover:text-custom-blue text-sm mt-4" data-lang-key="adminLogin">Admin Girişi</button>
+            </nav>
+        </div>
+    </header>
 
-                        <!-- WhatsApp İle Sipariş Butonu -->
-                        <button id="order-whatsapp-btn" onclick="orderViaWhatsApp()" class="w-full glow-shadow bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg flex items-center justify-center transition duration-200">
-                             <!-- Metin JS ile atanacak -->
-                        </button>
+    <!-- Tanıtım Bölümü -->
+    <section id="tanitim" class="py-20 md:py-32 text-center bg-gradient-to-br from-gray-900 to-black relative overflow-hidden">
+        <div class="absolute inset-0 z-0 opacity-10">
+            <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-custom-blue rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
+            <div class="absolute top-1/2 right-1/4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
+            <div class="absolute bottom-1/4 left-1/2 w-72 h-72 bg-sky-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+        </div>
+        <div class="container mx-auto px-4 relative z-10">
+            
+            <h1 class="text-5xl sm:text-7xl font-extrabold mb-4 leading-tight text-white drop-shadow-lg" data-lang-key="heroTitle">
+                Markanıza <span class="text-custom-blue glow-effect">Işık Katın</span>
+            </h1>
+            
+            <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto drop-shadow-md" data-lang-key="heroSubtitle">
+                MuLogo'da, işinizin özünü yansıtan, modern ve akılda kalıcı logolar tasarlıyor ve satışa sunuyoruz.
+            </p>
+            
+            <a href="#galeri" class="inline-block px-10 py-4 bg-custom-blue text-white text-lg font-bold rounded-xl shadow-xl hover:bg-custom-blue-dark transition duration-300 transform hover:scale-105 glow-effect" data-lang-key="btnExplore">
+                Koleksiyonu Keşfet
+            </a>
+        </div>
+    </section>
+
+    <!-- Logo Galeri Bölümü -->
+    <section id="galeri" class="py-16 md:py-24 bg-gradient-to-b from-black to-gray-900 flex-grow">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl font-bold text-center mb-12 text-custom-blue drop-shadow-lg" data-lang-key="galleryTitle">Eşsiz Logo Koleksiyonumuz</h2>
+            <p class="text-center text-gray-300 mb-16" data-lang-key="gallerySubtitle">Her biri özenle tasarlanmış, hemen kullanıma hazır logolar.</p>
+
+            
+            <div id="logoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                
+                <p class="text-center col-span-full text-gray-400" data-lang-key="loading">Yükleniyor...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Hakkımızda Bölümü -->
+    <section id="hakkimizda" class="py-16 md:py-24 bg-gray-900 border-t border-b border-custom-blue/20">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <h2 class="text-4xl font-bold text-center mb-12 text-custom-blue drop-shadow-lg" data-lang-key="aboutTitle">Neden MuLogo?</h2>
+            <div class="space-y-8 text-gray-300">
+                
+                <div class="flex items-start space-x-4 bg-gray-800/50 p-6 rounded-xl border border-custom-blue/30 glow-effect">
+                    <div class="text-custom-blue text-2xl mt-1">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.182a12.001 12.001 0 014.182 5.618m-4.182-5.618l-5.618 5.618m5.618-5.618L10 10m-4.182 5.618l-5.618-5.618m4.182 5.618L9 12m-4.182-5.618a12.001 12.001 0 014.182-5.618m-4.182 5.618L4 10m-4.182-5.618a12.001 12.001 0 014.182-5.618"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white" data-lang-key="feature1Title">Hazır ve Hızlı Teslimat</h3>
+                        <p class="mt-1" data-lang-key="feature1Text">Satın aldığınız logoyu anında yüksek çözünürlüklü ve vektörel formatlarda (AI, EPS, SVG) teslim ediyoruz.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-4 bg-gray-800/50 p-6 rounded-xl border border-custom-blue/30 glow-effect">
+                    <div class="text-custom-blue text-2xl mt-1">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white" data-lang-key="feature2Title">Tam Telif Hakkı</h3>
+                        <p class="mt-1" data-lang-key="feature2Text">Logoyu satın aldığınızda, ticari kullanıma yönelik tüm telif hakları ve sahiplik size geçer.</p>
+                    </div>
+                </div>
+
+                <div class="flex items-start space-x-4 bg-gray-800/50 p-6 rounded-xl border border-custom-blue/30 glow-effect">
+                    <div class="text-custom-blue text-2xl mt-1">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.05 16H3.05a2 2 0 01-2-2V8a2 2 0 012-2h8.05M11.05 16L16 12 11.05 8m0 8h-4"></path></svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-semibold text-white" data-lang-key="feature3Title">Özel Destek</h3>
+                        <p class="mt-1" data-lang-key="feature3Text">Logo seçimi, özelleştirme veya herhangi bir sorunuz için özel destek sağlıyoruz.</p>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <!-- Alt Kısım: Çok Gizli Özel Giriş Yeri -->
-    <footer class="p-4 text-center">
-        <a href="#" onclick="showAdminLogin()" id="admin-login-link" class="text-gray-600 text-xs opacity-50 secret-footer-link transition duration-300"></a>
+    </section>
+
+    <!-- İletişim Bölümü (WhatsApp Butonu ile değiştirildi) -->
+    <section id="iletisim" class="py-16 md:py-24 bg-gradient-to-t from-black to-gray-900">
+        <div class="container mx-auto px-4 max-w-2xl">
+            <h2 class="text-4xl font-bold text-center mb-12 text-custom-blue drop-shadow-lg" data-lang-key="contactTitle">Bize Ulaşın</h2>
+            <div class="bg-gray-800/70 p-8 sm:p-10 rounded-xl border border-custom-blue/50 glow-effect text-center">
+                <p class="text-lg text-gray-300 mb-6" data-lang-key="contactCta">Anında destek, sipariş veya özel istekleriniz için bize hemen WhatsApp üzerinden ulaşın.</p>
+                <button id="whatsappButton" 
+                        class="whatsapp-button w-full sm:w-auto inline-flex items-center justify-center px-10 py-4 bg-green-600 text-white text-xl font-bold rounded-xl shadow-2xl hover:bg-green-700 transition duration-300 transform hover:scale-[1.03] glow-effect focus:outline-none focus:ring-4 focus:ring-green-500/50">
+                    <svg class="whatsapp-icon w-8 h-8 mr-3" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.039 1.834c-5.184 0-9.405 4.221-9.405 9.405 0 1.62.41 3.149 1.168 4.498L1.5 22.5l5.592-1.472a9.385 9.385 0 0 0 5.447 1.638c5.184 0 9.405-4.221 9.405-9.405 0-5.184-4.221-9.405-9.405-9.405zm4.72 13.923s-.292.585-.877.679c-.585.094-1.393-.289-2.316-.679-.923-.389-2.175-.767-3.41-1.282-1.236-.514-2.274-1.383-3.08-2.385-.807-1.002-1.328-2.26-.062-3.52.26-.26.47-.354.717-.354.246 0 .54.008.825.008.286 0 .614-.078.932.747.318.825.908 2.21 1.05 2.502.143.292.23.36.438.36.208 0 1.13-.377 2.062-1.144.932-.767 1.492-1.742 1.492-1.742s.318-.468.396-.585c.078-.117.47-.117.755-.078.286.039 1.879.877 2.158 1.056.279.179.438.358.462.614.023.256.023.468.023.824-.001 2.456-1.554 3.197-1.944 3.444z" clip-rule="evenodd" fill-rule="evenodd"/>
+                    </svg>
+                    <span data-lang-key="btnWhatsApp">WhatsApp ile İletişim</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 border-t border-custom-blue/50 py-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="text-3xl font-extrabold tracking-tight text-custom-blue mb-4 cursor-pointer" id="adminFooterLink">MuLogo</div>
+            <p class="text-gray-500 text-sm" data-lang-key="footerText">© 2025 MuLogo. Tüm hakları saklıdır. | Aydınlatılmış Logo Tasarımları.</p>
+        </div>
     </footer>
 
-    <!-- Şifre Giriş Modalı -->
-    <div id="password-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center">
-        <div class="bg-gray-800 p-6 rounded-xl max-w-sm w-full glow-shadow border border-orange-700">
-            <h3 id="password-title" class="text-xl font-bold mb-4 text-orange-400"></h3>
-            <input type="password" id="admin-password" class="w-full p-3 rounded-lg bg-gray-900 border border-gray-700 mb-4 focus:border-orange-500 focus:ring focus:ring-orange-500/50" placeholder="Şifreniz">
-            <button onclick="checkPassword()" id="enter-btn" class="w-full glow-shadow bg-orange-600 hover:bg-orange-700 text-white font-bold py-3 rounded-lg transition duration-200"></button>
-            <button onclick="document.getElementById('password-modal').classList.add('hidden')" id="cancel-btn" class="w-full mt-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 rounded-lg transition duration-200"></button>
+    <!-- Admin Giriş Modalı (Başlangıçta Gizli) -->
+    <div id="adminLoginModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-sm border border-custom-blue/50 glow-effect">
+            <h3 class="text-2xl font-bold mb-6 text-center text-custom-blue" data-lang-key="adminLoginTitle">Admin Girişi</h3>
+            <input type="password" id="adminPassword" data-lang-key="placeholderPassword" placeholder="Şifre" 
+                   class="w-full px-4 py-3 mb-4 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white placeholder-gray-500">
+            <button id="loginButton" 
+                    class="w-full px-4 py-3 bg-custom-blue text-white font-bold rounded-lg hover:bg-custom-blue-dark transition duration-300 glow-effect" data-lang-key="btnLogin">
+                Giriş Yap
+            </button>
+            <button id="closeAdminLoginModal" class="mt-4 w-full text-gray-400 hover:text-white transition duration-300" data-lang-key="btnCancel">İptal</button>
+            <p id="loginError" class="text-red-500 text-center mt-3 hidden" data-lang-key="loginError">Yanlış şifre!</p>
         </div>
     </div>
-    
-    <!-- Custom Alert/Message Modal -->
-    <div id="message-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center">
-        <div class="bg-gray-800 p-6 rounded-xl max-w-xs w-full glow-shadow border border-orange-700">
-            <p id="message-text" class="text-white text-center mb-4"></p>
-            <button onclick="closeMessageModal()" id="message-ok-btn" class="w-full glow-shadow bg-orange-600 hover:bg-orange-700 text-white font-bold py-2 rounded-lg transition duration-200"></button>
-        </div>
-    </div>
-    
-    <!-- Custom Confirm Modal for Deletion -->
-    <div id="confirm-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center">
-        <div class="bg-gray-800 p-6 rounded-xl max-w-xs w-full glow-shadow border border-orange-700">
-            <p id="confirm-text" class="text-white text-center mb-4"></p>
-            <div class="flex justify-between space-x-4">
-                <button onclick="executeDelete()" id="confirm-yes-btn" class="flex-1 glow-shadow bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition duration-200"></button>
-                <button onclick="closeConfirmModal()" id="confirm-no-btn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 rounded-lg transition duration-200"></button>
+
+    <!-- Admin Paneli (Başlangıçta Gizli) -->
+    <div id="adminPanel" class="hidden fixed inset-0 bg-gray-900 z-50 flex flex-col p-6 overflow-y-auto">
+        <div class="container mx-auto">
+            <h2 class="text-4xl font-bold mb-8 text-custom-blue text-center drop-shadow-lg" data-lang-key="adminPanelTitle">Admin Paneli</h2>
+            <button id="logoutButton" class="absolute top-6 right-6 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300" data-lang-key="btnLogout">Çıkış Yap</button>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
+                
+                <div class="bg-gray-800/70 p-8 rounded-xl border border-custom-blue/50 glow-effect h-fit">
+                    <h3 class="text-2xl font-semibold mb-6 text-custom-blue" data-lang-key="adminAddLogoTitle">Yeni Logo Ekle</h3>
+                    <form id="addLogoForm" class="space-y-4">
+                        <div>
+                            <label for="logoName" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="adminLogoName">Logo Adı</label>
+                            <input type="text" id="logoName" required 
+                                   class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white">
+                        </div>
+                        <div>
+                            <label for="logoDescription" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="adminLogoDesc">Açıklama</label>
+                            <textarea id="logoDescription" rows="3" required 
+                                      class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white"></textarea>
+                        </div>
+                        <div>
+                            <label for="logoPrice" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="adminLogoPrice">Fiyat (USD)</label>
+                            <input type="number" id="logoPrice" step="0.01" required 
+                                   class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white">
+                        </div>
+                        <div>
+                            <label for="logoImage" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="adminLogoImage">Logo Görseli</label>
+                            <input type="file" id="logoImage" accept="image/*" required 
+                                   class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-custom-blue file:text-white hover:file:bg-custom-blue-dark">
+                            <img id="imagePreview" src="#" alt="Görsel Önizleme" class="mt-4 rounded-lg hidden max-h-40 object-contain mx-auto border border-gray-700">
+                        </div>
+                        <button type="submit" 
+                                class="w-full px-4 py-3 bg-custom-blue text-white font-bold rounded-lg hover:bg-custom-blue-dark transition duration-300 glow-effect" data-lang-key="adminBtnAddLogo">
+                            Logoyu Ekle
+                        </button>
+                    </form>
+                </div>
+
+                
+                <div class="bg-gray-800/70 p-8 rounded-xl border border-custom-blue/50 glow-effect">
+                    <h3 class="text-2xl font-semibold mb-6 text-custom-blue" data-lang-key="adminCurrentLogos">Mevcut Logolar</h3>
+                    <ul id="adminLogoList" class="space-y-4">
+                        
+                        <li class="text-gray-400" data-lang-key="adminNoLogo">Henüz logo eklenmedi.</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript Alanı -->
-    <script>
-        
-        // --- Sabitler ve Global Değişkenler (Firebase kaldırıldı) ---
-        const WHATSAPP_NUMBER = '994707841414';
-        const ADMIN_PASSWORD = '1975';
-        const LOCAL_STORAGE_KEY = 'muLogoYapLogos'; // LocalStorage anahtarı
-        
-        let logoData = []; // Yerel depodan yüklenecek logolar
-        let currentLogoId = null;
-        let isAdminLoggedIn = false; // Admin giriş durumu takip ediliyor (Yerel)
-        
-        // Varsayılan Mock Logolar (Local Storage boşsa bunlar yüklenecektir)
-        const initialMockLogos = [
-            { id: 'logo1', name: 'Flame Vortex', price: 49, url: 'https://placehold.co/400x300/f97316/ffffff?text=Flame+Logo', detail_desc: 'Enerji ve hareketliliği temsil eden dinamik alevli girdap logosu.' },
-            { id: 'logo2', name: 'Tech Shield', price: 75, url: 'https://placehold.co/400x300/1e293b/ffffff?text=Shield+Logo', detail_desc: 'Güvenlik ve yenilikçilik mesajı veren modern, mavi tonlarda bir kalkan logosu.' },
-            { id: 'logo3', name: 'Golden Hour', price: 60, url: 'https://placehold.co/400x300/ca8a04/ffffff?text=Sun+Logo', detail_desc: 'Güneşin doğuşunu simgeleyen, sıcak renklerde minimalist bir tasarım.' },
-            { id: 'logo4', name: 'Abstract Wave', price: 55, url: 'https://placehold.co/400x300/3b82f6/ffffff?text=Wave+Logo', detail_desc: 'Sakinlik ve akışkanlık temalı, soyut mavi dalga logosu.' }
-        ];
+    <!-- Logo Detay Modalı (Başlangıçta Gizli) -->
+    <div id="logoDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-2xl border border-custom-blue/50 relative">
+            <button id="closeDetailModal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">&times;</button>
+            <!-- Detay modalındaki görselde blur olmayacak -->
+            <img id="detailImage" src="#" alt="Logo Detay" class="w-full h-64 object-contain mb-6 rounded-lg bg-gray-900 p-2 border border-gray-700">
+            <h3 id="detailName" class="text-3xl font-bold mb-2 text-custom-blue"></h3>
+            <p id="detailDescription" class="text-gray-300 mb-4"></p>
+            <p class="text-xl font-bold text-custom-blue mb-6"><span id="detailPrice"></span> USD</p>
+            <button id="addToCartButton" class="w-full px-6 py-3 bg-custom-blue text-white font-bold rounded-lg hover:bg-custom-blue-dark transition duration-300 glow-effect" data-lang-key="btnAddToCart">
+                Sepete Ekle
+            </button>
+        </div>
+    </div>
 
-        const LANGUAGES = {
-            'tr': {
-                title: 'MuLogo Yap Dijital Galeri',
-                settings: 'Ayarlar',
-                main_gallery: 'MuLogo Yap',
-                detail_title: 'Logo Detayı',
-                about: 'Açıklama',
-                price: 'Fiyat',
-                add_to_cart: 'WhatsApp İle Sipariş Et',
-                view_details: 'Detaylı Görseller',
-                delete_logo: 'Logoyu Sil',
-                back: 'Kapat',
-                admin_login: 'Özel Giriş Yeri',
-                admin_title: 'Yönetici Paneli (Yeni Logo Ekle)',
-                password: 'Şifre',
-                enter: 'Giriş Yap',
-                add_logo: 'Yeni Logo Ekle',
-                logo_name: 'Logo Adı',
-                logo_desc: 'Açıklama',
-                logo_price: 'Fiyat (USD)',
-                file_input_label: 'Bilgisayarınızdan Görsel Seçin (JPG/PNG)',
-                save: 'Kaydet',
-                logout: 'Çıkış Yap',
-                placeholder_detail_desc: 'Bu logo, marka kimliğinizi yansıtacak şekilde titizlikle hazırlanmıştır.',
-                cancel: 'İptal',
-                ok_button: 'Tamam',
-                alert_password_fail: 'Hatalı Şifre!',
-                alert_logo_added: 'Logo başarıyla eklendi!',
-                alert_logo_deleted: 'Logo başarıyla silindi!',
-                alert_no_logo: 'Gösterilecek logo bulunamadı.',
-                alert_no_file: 'Lütfen bir resim dosyası seçin.',
-                confirm_delete_text: 'Bu logoyu kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
-                yes_delete: 'Evet, Sil',
-                no_cancel: 'İptal'
+    <!-- Sepet Modalı (Başlangıçta Gizli) -->
+    <div id="cartModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md border border-custom-blue/50 relative">
+            <button id="closeCartModal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">&times;</button>
+            <h3 class="text-2xl font-bold mb-6 text-custom-blue text-center" data-lang-key="cartTitle">Sepetim</h3>
+            <ul id="cartItems" class="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2">
+                
+            </ul>
+            <p id="cartTotal" class="text-xl font-bold text-white text-right mb-6" data-lang-key="cartTotal">Toplam: 0.00 USD</p>
+            <button id="checkoutButton" class="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-300 glow-effect" data-lang-key="btnCheckout">
+                WhatsApp ile Siparişi Tamamla
+            </button>
+            <p id="emptyCartMessage" class="text-gray-400 text-center mt-4 hidden" data-lang-key="cartEmpty">Sepetiniz boş.</p>
+        </div>
+    </div>
+
+
+    
+    <script>
+        const ADMIN_PASSWORD = "1975";
+        const WHATSAPP_NUMBER = "994707841414"; 
+
+        let logos = JSON.parse(localStorage.getItem('mu_logos')) || [];
+        let cart = JSON.parse(localStorage.getItem('mu_cart')) || [];
+        let currentLang = localStorage.getItem('mu_lang') || 'tr'; 
+
+        // --- Çeviri Objesi ---
+        const translations = {
+            tr: {
+                pageTitle: "MuLogo | Eşsiz Logo Tasarımları",
+                navHome: "Anasayfa", navLogos: "Logolarımız", navAbout: "Hakkımızda", navContact: "İletişim",
+                heroTitle: 'Markanıza <span class="text-custom-blue glow-effect">Işık Katın</span>',
+                heroSubtitle: "MuLogo'da, işinizin özünü yansıtan, modern ve akılda kalıcı logolar tasarlıyor ve satışa sunuyoruz.",
+                btnExplore: "Koleksiyonu Keşfet", loading: "Yükleniyor...",
+                galleryTitle: "Eşsiz Logo Koleksiyonumuz", gallerySubtitle: "Her biri özenle tasarlanmış, hemen kullanıma hazır logolar.",
+                aboutTitle: "Neden MuLogo?",
+                feature1Title: "Hazır ve Hızlı Teslimat", feature1Text: "Satın aldığınız logoyu anında yüksek çözünürlüklü ve vektörel formatlarda (AI, EPS, SVG) teslim ediyoruz.",
+                feature2Title: "Tam Telif Hakkı", feature2Text: "Logoyu satın aldığınızda, ticari kullanıma yönelik tüm telif hakları ve sahiplik size geçer.",
+                feature3Title: "Özel Destek", feature3Text: "Logo seçimi, özelleştirme veya herhangi bir sorunuz için özel destek sağlıyoruz.",
+                contactTitle: "Bize Ulaşın", contactCta: "Anında destek, sipariş veya özel istekleriniz için bize hemen WhatsApp üzerinden ulaşın.",
+                btnWhatsApp: "WhatsApp ile İletişim",
+                footerText: "© 2025 MuLogo. Tüm hakları saklıdır. | Aydınlatılmış Logo Tasarımları.",
+                btnCart: "Sepetim",
+                // Modals
+                adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifre", btnLogin: "Giriş Yap", btnCancel: "İptal", loginError: "Yanlış şifre!",
+                adminPanelTitle: "Admin Paneli", btnLogout: "Çıkış Yap", adminAddLogoTitle: "Yeni Logo Ekle",
+                adminLogoName: "Logo Adı", adminLogoDesc: "Açıklama", adminLogoPrice: "Fiyat (USD)", adminLogoImage: "Logo Görseli", adminBtnAddLogo: "Logoyu Ekle",
+                adminCurrentLogos: "Mevcut Logolar", adminNoLogo: "Henüz logo eklenmedi.",
+                logoCardButton: "Detayları İncele",
+                btnAddToCart: "Sepete Ekle",
+                cartTitle: "Sepetim", cartTotal: "Toplam:", btnCheckout: "WhatsApp ile Siparişi Tamamla", cartEmpty: "Sepetiniz boş.",
+                addedToCart: "Sepete Eklendi!"
             },
-            'az': {
-                title: 'Rəqəmsal Sənət Qalereyası',
-                settings: 'Tənzimləmələr',
-                main_gallery: 'Loqo Qalereyası',
-                detail_title: 'Loqo Təfərrüatı',
-                about: 'Təsvir',
-                price: 'Qiymət',
-                add_to_cart: 'WhatsApp İlə Sifariş Et',
-                view_details: 'Ətraflı Şəkillər',
-                delete_logo: 'Loqonu Sil',
-                back: 'Bağla',
-                admin_login: 'Xüsusi Giriş Yeri',
-                admin_title: 'İdarəetmə Paneli (Yeni Loqo Əlavə Et)',
-                password: 'Parol',
-                enter: 'Daxil Ol',
-                add_logo: 'Yeni Loqo Əlavə Et',
-                logo_name: 'Loqo Adı',
-                logo_desc: 'Təsvir',
-                logo_price: 'Qiymət (USD)',
-                file_input_label: 'Kompüterinizdən Şəkil Seçin (JPG/PNG)',
-                save: 'Yadda Saxla',
-                logout: 'Çıxış Et',
-                placeholder_detail_desc: 'Bu loqo, marka şəxsiyyətinizi əks etdirmək üçün diqqətlə hazırlanmışdır.',
-                cancel: 'Ləğv Et',
-                ok_button: 'Oldu',
-                alert_password_fail: 'Səhv Parol!',
-                alert_logo_added: 'Loqo uğurla əlavə edildi!',
-                alert_logo_deleted: 'Loqo uğurla silindi!',
-                alert_no_logo: 'Göstəriləcək loqo tapılmadı.',
-                alert_no_file: 'Zəhmət olmasa bir şəkil faylı seçin.',
-                confirm_delete_text: 'Bu loqonu birdəfəlik silmək istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz.',
-                yes_delete: 'Bəli, Sil',
-                no_cancel: 'Ləğv Et'
+            en: {
+                pageTitle: "MuLogo | Unique Logo Designs",
+                navHome: "Homepage", navLogos: "Our Logos", navAbout: "About Us", navContact: "Contact",
+                heroTitle: 'Illuminate Your <span class="text-custom-blue glow-effect">Brand</span>',
+                heroSubtitle: "At MuLogo, we design and sell modern, memorable logos that reflect the essence of your business.",
+                btnExplore: "Explore Collection", loading: "Loading...",
+                galleryTitle: "Our Unique Logo Collection", gallerySubtitle: "Ready-to-use logos, each carefully crafted.",
+                aboutTitle: "Why MuLogo?",
+                feature1Title: "Instant and Fast Delivery", feature1Text: "We deliver your purchased logo instantly in high-resolution vector formats (AI, EPS, SVG).",
+                feature2Title: "Full Copyright", feature2Text: "When you purchase the logo, all commercial copyrights and ownership are transferred to you.",
+                feature3Title: "Dedicated Support", feature3Text: "We provide dedicated support for logo selection, customization, or any questions you may have.",
+                contactTitle: "Contact Us", contactCta: "For immediate support, orders, or special requests, reach out to us directly via WhatsApp.",
+                btnWhatsApp: "Contact via WhatsApp",
+                footerText: "© 2025 MuLogo. All rights reserved. | Illuminated Logo Designs.",
+                btnCart: "My Cart",
+                // Modals
+                adminLogin: "Admin Login", adminLoginTitle: "Admin Login", placeholderPassword: "Password", btnLogin: "Login", btnCancel: "Cancel", loginError: "Incorrect password!",
+                adminPanelTitle: "Admin Panel", btnLogout: "Logout", adminAddLogoTitle: "Add New Logo",
+                adminLogoName: "Logo Name", adminLogoDesc: "Description", adminLogoPrice: "Price (USD)", adminLogoImage: "Logo Image", adminBtnAddLogo: "Add Logo",
+                adminCurrentLogos: "Current Logos", adminNoLogo: "No logos added yet.",
+                logoCardButton: "View Details",
+                btnAddToCart: "Add to Cart",
+                cartTitle: "My Cart", cartTotal: "Total:", btnCheckout: "Complete Order via WhatsApp", cartEmpty: "Your cart is empty.",
+                addedToCart: "Added to Cart!"
             },
-            'en': {
-                title: 'Digital Art Gallery',
-                settings: 'Settings',
-                main_gallery: 'Logo Gallery',
-                detail_title: 'Logo Details',
-                about: 'Description',
-                price: 'Price',
-                add_to_cart: 'Order via WhatsApp',
-                view_details: 'Detailed Images',
-                delete_logo: 'Delete Logo',
-                back: 'Close',
-                admin_login: 'Special Entry Area',
-                admin_title: 'Admin Panel (Add New Logo)',
-                password: 'Password',
-                enter: 'Enter',
-                add_logo: 'Add New Logo',
-                logo_name: 'Logo Name',
-                logo_desc: 'Description',
-                logo_price: 'Price (USD)',
-                file_input_label: 'Select Image from your Computer (JPG/PNG)',
-                save: 'Save',
-                logout: 'Logout',
-                placeholder_detail_desc: 'This logo was meticulously crafted to reflect your brand identity.',
-                cancel: 'Cancel',
-                ok_button: 'OK',
-                alert_password_fail: 'Wrong Password!',
-                alert_logo_added: 'Logo successfully added!',
-                alert_logo_deleted: 'Logo successfully deleted!',
-                alert_no_logo: 'No logos found to display.',
-                alert_no_file: 'Please select an image file.',
-                confirm_delete_text: 'Are you sure you want to permanently delete this logo? This action cannot be undone.',
-                yes_delete: 'Yes, Delete',
-                no_cancel: 'Cancel'
+            az: {
+                pageTitle: "MuLogo | Misilsiz Loqo Dizaynları",
+                navHome: "Ana Səhifə", navLogos: "Loqolarımız", navAbout: "Haqqımızda", navContact: "Əlaqə",
+                heroTitle: 'Brendinizə <span class="text-custom-blue glow-effect">İşıq Qatın</span>',
+                heroSubtitle: "MuLogo-da biz, biznesinizin əsasını əks etdirən, müasir və yadda qalan loqolar dizayn edir və satışa çıxarırıq.",
+                btnExplore: "Kolleksiyaya Bax", loading: "Yüklənir...",
+                galleryTitle: "Misilsiz Loqo Kolleksiyamız", gallerySubtitle: "Hər biri diqqətlə hazırlanmış, dərhal istifadəyə hazır loqolar.",
+                aboutTitle: "Niyə MuLogo?",
+                feature1Title: "Hazır və Sürətli Təhvil", feature1Text: "Aldığınız loqonu dərhal yüksək keyfiyyətli vektor formatlarında (AI, EPS, SVG) təhvil veririk.",
+                feature2Title: "Tam Müəllif Hüququ", feature2Text: "Loqonu aldığınız zaman, ticari istifadə üçün bütün müəllif hüquqları sizə keçir.",
+                feature3Title: "Xüsusi Dəstək", feature3Text: "Loqo seçimi, fərdiləşdirmə və ya hər hansı suallarınız üçün xüsusi dəstək təmin edirik.",
+                contactTitle: "Bizimlə Əlaqə", contactCta: "Dərhal dəstək, sifariş və ya xüsusi istəkləriniz üçün bizə birbaşa WhatsApp üzərindən müraciət edin.",
+                btnWhatsApp: "WhatsApp ilə Əlaqə",
+                footerText: "© 2025 MuLogo. Bütün hüquqlar qorunur. | İşıqlandırılmış Loqo Dizaynları.",
+                btnCart: "Səbətim",
+                // Modals
+                adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifrə", btnLogin: "Daxil Ol", btnCancel: "Ləğv Et", loginError: "Yanlış şifrə!",
+                adminPanelTitle: "Admin Paneli", btnLogout: "Çıxış Et", adminAddLogoTitle: "Yeni Loqo Əlavə Et",
+                adminLogoName: "Loqo Adı", adminLogoDesc: "Təsvir", adminLogoPrice: "Qiymət (USD)", adminLogoImage: "Loqo Şəkili", adminBtnAddLogo: "Loqonu Əlavə Et",
+                adminCurrentLogos: "Mövcud Loqolar", adminNoLogo: "Hələ loqo əlavə edilməyib.",
+                logoCardButton: "Ətraflı Bax",
+                btnAddToCart: "Səbətə Əlavə Et",
+                cartTitle: "Səbətim", cartTotal: "Cəmi:", btnCheckout: "WhatsApp ilə Sifarişi Tamamla", cartEmpty: "Səbətiniz boşdur.",
+                addedToCart: "Səbətə Əlavə Edildi!"
             }
         };
 
-        let currentLang = localStorage.getItem('siteLang') || 'tr';
-        let translations = LANGUAGES[currentLang];
+        // DOM Elementleri
+        const logoGrid = document.getElementById('logoGrid');
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const adminLoginLinkMobile = document.getElementById('adminLoginLinkMobile');
 
-        // --- LocalStorage Veri Yönetimi Fonksiyonları ---
+        // Admin Modalı
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const adminPasswordInput = document.getElementById('adminPassword');
+        const loginButton = document.getElementById('loginButton');
+        const closeAdminLoginModal = document.getElementById('closeAdminLoginModal');
+        const loginError = document.getElementById('loginError');
 
-        // Logoları LocalStorage'dan yükler
-        function loadLogos() {
-            const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
-            if (storedData) {
-                try {
-                    logoData = JSON.parse(storedData);
-                } catch (e) {
-                    console.error("Local storage verisi bozuk, varsayılan veri kullanılıyor.", e);
-                    logoData = initialMockLogos;
-                    saveLogos(); 
-                }
-            } else {
-                // İlk çalıştırma: Mock data kullan ve kaydet
-                logoData = initialMockLogos;
-                saveLogos();
-            }
-            renderLogos(logoData);
-        }
+        // Admin Paneli
+        const adminPanel = document.getElementById('adminPanel');
+        const logoutButton = document.getElementById('logoutButton');
+        const addLogoForm = document.getElementById('addLogoForm');
+        const logoNameInput = document.getElementById('logoName');
+        const logoDescriptionInput = document.getElementById('logoDescription');
+        const logoPriceInput = document.getElementById('logoPrice');
+        const logoImageInput = document.getElementById('logoImage');
+        const imagePreview = document.getElementById('imagePreview');
+        const adminLogoList = document.getElementById('adminLogoList');
 
-        // Logoları LocalStorage'a kaydeder
-        function saveLogos() {
-            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(logoData));
-        }
+        // Logo Detay Modalı
+        const logoDetailModal = document.getElementById('logoDetailModal');
+        const closeDetailModal = document.getElementById('closeDetailModal');
+        const detailImage = document.getElementById('detailImage');
+        const detailName = document.getElementById('detailName');
+        const detailDescription = document.getElementById('detailDescription');
+        const addToCartButton = document.getElementById('addToCartButton');
+        let currentSelectedLogo = null; 
 
-        // --- Mesaj ve Onay Modalı Fonksiyonları ---
-        function showMessageModal(messageKey) {
-            document.getElementById('message-text').textContent = translations[messageKey];
-            document.getElementById('message-ok-btn').textContent = translations.ok_button;
-            document.getElementById('message-modal').classList.remove('hidden');
-        }
-
-        function closeMessageModal() {
-            document.getElementById('message-modal').classList.add('hidden');
-        }
+        // Sepet Modalı
+        const cartButton = document.getElementById('cartButton');
+        const cartCount = document.getElementById('cartCount');
+        const cartModal = document.getElementById('cartModal');
+        const closeCartModal = document.getElementById('closeCartModal');
+        const cartItemsList = document.getElementById('cartItems');
+        const cartTotal = document.getElementById('cartTotal');
+        const checkoutButton = document.getElementById('checkoutButton');
+        const emptyCartMessage = document.getElementById('emptyCartMessage');
+        const adminFooterLink = document.getElementById('adminFooterLink');
+        const whatsappButton = document.getElementById('whatsappButton');
         
-        function confirmDelete(id) {
-            if (!isAdminLoggedIn) return;
-            currentLogoId = id;
-            document.getElementById('confirm-text').textContent = translations.confirm_delete_text;
-            document.getElementById('confirm-yes-btn').textContent = translations.yes_delete;
-            document.getElementById('confirm-no-btn').textContent = translations.no_cancel;
-            document.getElementById('confirm-modal').classList.remove('hidden');
-        }
-
-        function closeConfirmModal() {
-            document.getElementById('confirm-modal').classList.add('hidden');
-            currentLogoId = null;
-        }
-
-        function executeDelete() {
-            closeConfirmModal();
-            if (!isAdminLoggedIn || !currentLogoId) return;
-
-            // LocalStorage'dan silme işlemi
-            const initialLength = logoData.length;
-            logoData = logoData.filter(l => l.id !== currentLogoId);
-            
-            if (logoData.length < initialLength) {
-                 saveLogos(); // Local Storage'a kaydet
-                 showMessageModal('alert_logo_deleted');
-                 closeDetailModal();
-                 renderLogos(logoData); // Galeriyi yenile
-            } else {
-                console.error("Silinecek logo bulunamadı.");
-                showMessageModal('alert_no_logo'); 
-            }
-
-            currentLogoId = null;
-        }
-
-
-        // --- Dil Yönetimi Fonksiyonları ---
+        // --- Fonksiyonlar ---
 
         function setLanguage(lang) {
             currentLang = lang;
-            localStorage.setItem('siteLang', lang);
-            translations = LANGUAGES[currentLang];
-            applyTranslations();
-            renderLogos(logoData); // Veriyi yeniden çiz
+            localStorage.setItem('mu_lang', lang);
+            updateUILanguage();
+            renderLogos(); // Logoları yeniden render et ki buton metinleri değişsin
         }
 
-        function applyTranslations() {
-            document.getElementById('page-title').textContent = translations.title;
-            document.getElementById('settings-btn-text').textContent = translations.settings;
-            document.getElementById('main-gallery-title').textContent = translations.main_gallery;
-            document.getElementById('admin-login-link').textContent = translations.admin_login;
-            document.getElementById('message-ok-btn').textContent = translations.ok_button;
+        function updateUILanguage() {
+            const lang = currentLang;
+            // Tüm data-lang-key'li elementleri güncelle
+            document.querySelectorAll('[data-lang-key]').forEach(element => {
+                const key = element.getAttribute('data-lang-key');
+                if (translations[lang] && translations[lang][key]) {
+                    // Özel durum: title metni HTML içeriyorsa innerHTML kullan
+                    if (key === 'heroTitle') {
+                        element.innerHTML = translations[lang][key];
+                    } else {
+                        // Placeholders için
+                        if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
+                            element.placeholder = translations[lang][key];
+                        } else {
+                            element.textContent = translations[lang][key];
+                        }
+                    }
+                }
+            });
 
-            // Admin Panel
-            document.getElementById('admin-title-text').textContent = translations.admin_title;
-            document.getElementById('logo-form').querySelector('#logo-name').placeholder = translations.logo_name;
-            document.getElementById('logo-form').querySelector('#logo-desc').placeholder = translations.logo_desc;
-            document.getElementById('logo-form').querySelector('#logo-price').placeholder = translations.logo_price;
-            document.getElementById('file-input-label').textContent = translations.file_input_label;
-            document.getElementById('save-logo-btn').textContent = translations.save;
-            document.getElementById('logout-btn').textContent = translations.logout;
-
-            // Password Modal
-            document.getElementById('password-title').textContent = translations.password;
-            document.getElementById('enter-btn').textContent = translations.enter;
-            document.getElementById('cancel-btn').textContent = translations.cancel;
+            // Sepet ve Admin modalındaki placeholder metinlerini manuel güncelle
+            adminPasswordInput.placeholder = translations[lang].placeholderPassword;
             
-            // Detay Modal
-            document.getElementById('delete-logo-btn').textContent = translations.delete_logo;
-            document.getElementById('order-whatsapp-btn').textContent = translations.add_to_cart;
-            document.getElementById('about-heading').textContent = translations.about;
+            // cartTotal'ı güncellerken Toplam metnini ayarla
+            renderCartItems(); 
+
+            document.documentElement.lang = lang;
         }
 
-        function toggleSettings() {
-            document.getElementById('settings-dropdown').classList.toggle('hidden');
+
+        function saveLogos() {
+            localStorage.setItem('mu_logos', JSON.stringify(logos));
+            renderLogos(); 
+            renderAdminLogoList(); 
         }
 
-        // --- Galeri Render Fonksiyonu ---
+        function saveCart() {
+            localStorage.setItem('mu_cart', JSON.stringify(cart));
+            updateCartCount();
+            renderCartItems();
+        }
 
-        function renderLogos(logos) {
-            const gallery = document.getElementById('logo-gallery');
-            gallery.innerHTML = '';
+        function renderLogos() {
+            logoGrid.innerHTML = ''; 
+            const lang = currentLang;
+            const buttonText = translations[lang].logoCardButton;
 
             if (logos.length === 0) {
-                gallery.innerHTML = `<p class="col-span-full text-center text-gray-500 mt-10">${translations.alert_no_logo}</p>`;
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-gray-400">${translations[lang].adminNoLogo}</p>`;
                 return;
             }
 
             logos.forEach(logo => {
                 const logoCard = document.createElement('div');
-                logoCard.className = 'bg-gray-800 rounded-xl overflow-hidden cursor-pointer glow-shadow transition duration-300 transform hover:scale-[1.02]';
-                logoCard.onclick = () => showDetailModal(logo.id);
-                
+                logoCard.className = 'logo-card p-6 rounded-2xl glow-effect cursor-pointer transform hover:scale-105 transition-transform duration-300';
                 logoCard.innerHTML = `
-                    <div class="h-40 overflow-hidden">
-                        <!-- low-quality-logo class is applied here for heavy blur -->
-                        <img src="${logo.url}" alt="${logo.name}" class="w-full h-full object-cover low-quality-logo">
-                    </div>
-                    <div class="p-4">
-                        <h3 class="text-lg font-bold truncate text-orange-300">${logo.name}</h3>
-                        <p class="text-sm text-gray-400 mt-1">${translations.price}: $${logo.price}</p>
+                    <!-- Anti-Theft: Logo bulanık olarak gösteriliyor -->
+                    <img src="${logo.image}" alt="${logo.name}" class="w-full h-40 object-contain mb-4 rounded-lg bg-gray-900 p-2 border border-gray-700 filter blur-md">
+                    <h3 class="text-xl font-semibold mb-2 text-white text-center">${logo.name}</h3>
+                    <p class="text-gray-400 mb-4 text-sm text-center line-clamp-2">${logo.description}</p>
+                    <div class="flex justify-between items-center mt-4">
+                        <span class="text-2xl font-bold text-custom-blue">${logo.price.toFixed(2)} USD</span>
+                        <button class="view-details-btn px-5 py-2 bg-custom-blue text-white rounded-lg text-sm font-semibold hover:bg-custom-blue-dark transition duration-300">
+                            ${buttonText}
+                        </button>
                     </div>
                 `;
-                gallery.appendChild(logoCard);
+                logoCard.querySelector('.view-details-btn').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    showLogoDetail(logo);
+                });
+                logoCard.addEventListener('click', () => showLogoDetail(logo));
+                logoGrid.appendChild(logoCard);
             });
         }
 
-        // --- Detay Modalı Fonksiyonları ---
+        function renderAdminLogoList() {
+            adminLogoList.innerHTML = '';
+            const lang = currentLang;
 
-        function showDetailModal(id) {
-            const logo = logoData.find(l => l.id === id); 
-            if (!logo) return;
-            
-            currentLogoId = id;
-
-            document.getElementById('modal-title').textContent = logo.name;
-            document.getElementById('detail-image').src = logo.url; 
-            document.getElementById('modal-price').textContent = `${translations.price}: $${logo.price}`;
-            
-            // Metinler
-            document.getElementById('modal-about-text').textContent = logo.detail_desc || translations.placeholder_detail_desc;
-            
-            // Silme Butonu Görünürlüğü (Sadece Yönetici Girişi Yapılmışsa)
-            const deleteBtn = document.getElementById('delete-logo-btn');
-            if (isAdminLoggedIn) {
-                deleteBtn.classList.remove('hidden');
-            } else {
-                deleteBtn.classList.add('hidden');
+            if (logos.length === 0) {
+                adminLogoList.innerHTML = `<li class="text-gray-400">${translations[lang].adminNoLogo}</li>`;
+                return;
             }
-            deleteBtn.textContent = translations.delete_logo;
-            
-            document.getElementById('order-whatsapp-btn').textContent = translations.add_to_cart;
-            document.getElementById('detail-modal').classList.remove('hidden');
+
+            logos.forEach(logo => {
+                const listItem = document.createElement('li');
+                listItem.className = 'flex items-center justify-between bg-gray-900 p-4 rounded-lg border border-gray-700';
+                listItem.innerHTML = `
+                    <div class="flex items-center space-x-4">
+                        <img src="${logo.image}" alt="${logo.name}" class="w-12 h-12 object-contain rounded-md bg-gray-800 p-1 border border-gray-600">
+                        <div>
+                            <p class="font-semibold text-white">${logo.name}</p>
+                            <p class="text-custom-blue text-sm">${logo.price.toFixed(2)} USD</p>
+                        </div>
+                    </div>
+                    <button class="delete-logo-btn px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition duration-300" data-id="${logo.id}">
+                        ${translations[lang].btnLogout} 
+                    </button>
+                `;
+                adminLogoList.appendChild(listItem);
+            });
+
+            document.querySelectorAll('.delete-logo-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const logoIdToDelete = e.target.dataset.id;
+                    deleteLogo(logoIdToDelete);
+                });
+            });
         }
 
-        function closeDetailModal() {
-            document.getElementById('detail-modal').classList.add('hidden');
-            currentLogoId = null;
+        function deleteLogo(id) {
+            logos = logos.filter(logo => logo.id !== id);
+            saveLogos();
         }
 
-        // --- WhatsApp Sipariş Fonksiyonu ---
-        
-        function orderViaWhatsApp() {
-            if (!currentLogoId) return;
-            const logo = logoData.find(l => l.id === currentLogoId);
-            if (!logo) return;
-
-            const message = encodeURIComponent(
-                `${translations.add_to_cart}!\n\n` +
-                `${translations.logo_name}: ${logo.name}\n` +
-                `${translations.price}: $${logo.price}\n\n` +
-                `Lütfen bu logo hakkında detaylı bilgi ve satın alma süreci için bana yardımcı olun.`
-            );
-
-            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
-            window.open(waLink, '_blank');
+        function showLogoDetail(logo) {
+            currentSelectedLogo = logo;
+            // Detay modalında görsel net olmalı
+            detailImage.src = logo.image;
+            detailName.textContent = logo.name;
+            detailDescription.textContent = logo.description;
+            // Fiyat bilgisinin yanına USD ekleniyor
+            document.getElementById('detailPrice').textContent = logo.price.toFixed(2);
+            logoDetailModal.classList.remove('hidden'); 
         }
 
-        // --- Yönetici Paneli Fonksiyonları ---
-
-        function showAdminLogin() {
-            document.getElementById('password-modal').classList.remove('hidden');
-            return false;
-        }
-
-        function checkPassword() {
-            const input = document.getElementById('admin-password');
-            if (input.value === ADMIN_PASSWORD) {
-                isAdminLoggedIn = true; // Admin girişini kaydet
-                document.getElementById('password-modal').classList.add('hidden');
-                document.getElementById('admin-password').value = '';
-                openAdminPanel();
-                renderLogos(logoData); // Admin butonları için gerekebilir
+        function updateCartCount() {
+            if (cart.length > 0) {
+                cartCount.textContent = cart.length;
+                cartCount.classList.remove('hidden');
             } else {
-                isAdminLoggedIn = false;
-                showMessageModal('alert_password_fail');
-                input.value = '';
+                cartCount.classList.add('hidden');
             }
         }
 
-        function openAdminPanel() {
-            document.getElementById('admin-panel').classList.remove('hidden');
-            document.getElementById('logo-form').reset();
-            document.getElementById('logo-file-input').required = true;
+        function renderCartItems() {
+            cartItemsList.innerHTML = '';
+            let total = 0;
+            const lang = currentLang;
+
+            if (cart.length === 0) {
+                emptyCartMessage.classList.remove('hidden');
+                cartTotal.textContent = `${translations[lang].cartTotal} 0.00 USD`;
+                checkoutButton.disabled = true;
+                checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
+                return;
+            } else {
+                emptyCartMessage.classList.add('hidden');
+                checkoutButton.disabled = false;
+                checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            cart.forEach(item => {
+                total += item.price;
+                const listItem = document.createElement('li');
+                listItem.className = 'flex items-center justify-between bg-gray-700 p-3 rounded-lg border border-gray-600';
+                listItem.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <img src="${item.image}" alt="${item.name}" class="w-10 h-10 object-contain rounded-md bg-gray-800 p-0.5 border border-gray-500">
+                        <span class="text-white">${item.name}</span>
+                    </div>
+                    <div class="flex items-center space-x-3">
+                        <span class="text-custom-blue font-semibold">${item.price.toFixed(2)} USD</span>
+                        <button class="remove-from-cart-btn text-red-400 hover:text-red-500 text-lg" data-id="${item.cartId}">&times;</button>
+                    </div>
+                `;
+                cartItemsList.appendChild(listItem);
+            });
+
+            cartTotal.textContent = `${translations[lang].cartTotal} ${total.toFixed(2)} USD`;
+
+            document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const itemIdToRemove = e.target.dataset.id;
+                    removeFromCart(itemIdToRemove);
+                });
+            });
         }
 
-        function closeAdminPanel() {
-            isAdminLoggedIn = false; // Çıkış yapıldığında admin durumunu sıfırla
-            document.getElementById('admin-panel').classList.add('hidden');
-            renderLogos(logoData); // Admin butonları gizlensin
+        function addToCart(logo) {
+            cart.push({ ...logo, cartId: Date.now().toString() });
+            saveCart();
+            const originalButtonText = translations[currentLang].btnAddToCart;
+            const addedText = translations[currentLang].addedToCart;
+
+            addToCartButton.textContent = addedText;
+            addToCartButton.classList.remove('bg-custom-blue', 'hover:bg-custom-blue-dark');
+            addToCartButton.classList.add('bg-green-600');
+            
+            setTimeout(() => {
+                addToCartButton.textContent = originalButtonText;
+                addToCartButton.classList.remove('bg-green-600');
+                addToCartButton.classList.add('bg-custom-blue', 'hover:bg-custom-blue-dark');
+                logoDetailModal.classList.add('hidden'); 
+            }, 1200);
         }
 
-        // --- Dosya Yükleme ve LocalStorage Kaydı ---
-        
-        function handleLogoFormSubmission(event) {
-            event.preventDefault();
+        function removeFromCart(cartId) {
+            cart = cart.filter(item => item.cartId !== cartId);
+            saveCart();
+        }
+
+        function generateWhatsAppMessage() {
+            if (cart.length === 0) return;
+
+            let message = translations[currentLang].checkoutMessageStart || "Hello MuLogo,\n\nI want to order the logos in my cart:\n\n";
+            let total = 0;
+
+            cart.forEach((item, index) => {
+                message += `${index + 1}. ${item.name} - ${item.price.toFixed(2)} USD\n`;
+                total += item.price;
+            });
+
+            message += `\n${translations[currentLang].cartTotal || "Total"}: ${total.toFixed(2)} USD\n\n`;
+            message += translations[currentLang].checkoutMessageEnd || "Please contact me to complete my order.";
+
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            window.open(whatsappUrl, '_blank');
             
-            const fileInput = document.getElementById('logo-file-input');
-            const file = fileInput.files[0];
-            
+            cart = [];
+            saveCart();
+            cartModal.classList.add('hidden'); 
+        }
+
+        // --- Olay Dinleyicileri ---
+        // Dil seçimi butonları
+        document.querySelectorAll('.lang-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                setLanguage(button.getAttribute('data-lang'));
+            });
+        });
+
+        // WhatsApp iletişim butonu
+        whatsappButton.addEventListener('click', () => {
+             const message = translations[currentLang].contactWhatsAppMessage || "Merhaba, MuLogo'dan sizinle iletişime geçiyorum. Bir logo tasarımı veya özel bir sipariş hakkında bilgi almak istiyorum.";
+             const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+             window.open(whatsappUrl, '_blank');
+        });
+
+
+        // Mobil menü açma/kapama
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Footer'daki logo yazısına tıklayınca admin girişi aç (Gizli Giriş)
+        adminFooterLink.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            adminLoginModal.classList.remove('hidden'); 
+        });
+
+        // Admin Giriş linki (mobil menüde)
+        adminLoginLinkMobile.addEventListener('click', () => {
+            mobileMenu.classList.add('hidden'); 
+            adminLoginModal.classList.remove('hidden'); 
+        });
+
+        // Admin Giriş Modalı olayları
+        loginButton.addEventListener('click', () => {
+            if (adminPasswordInput.value === ADMIN_PASSWORD) {
+                adminLoginModal.classList.add('hidden'); 
+                adminPanel.classList.remove('hidden'); 
+                loginError.classList.add('hidden');
+                adminPasswordInput.value = '';
+                renderAdminLogoList();
+            } else {
+                loginError.classList.remove('hidden');
+            }
+        });
+
+        closeAdminLoginModal.addEventListener('click', () => {
+            adminLoginModal.classList.add('hidden'); 
+            loginError.classList.add('hidden');
+            adminPasswordInput.value = '';
+        });
+
+        // Yönetici Panelinden çıkış yap
+        logoutButton.addEventListener('click', () => {
+            adminPanel.classList.add('hidden'); 
+            // alert() yerine console.log kullanıldı
+            console.log("Admin panelinden çıkış yapıldı.");
+        });
+
+        // Resim önizleme
+        logoImageInput.addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                imagePreview.classList.add('hidden');
+                imagePreview.src = '#';
+            }
+        });
+
+        // Logo Ekleme Formu
+        addLogoForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const file = logoImageInput.files[0];
             if (!file) {
-                 showMessageModal('alert_no_file');
-                 return;
+                // alert() yerine console.error kullanıldı
+                console.error("Lütfen bir logo görseli seçin.");
+                return;
             }
 
             const reader = new FileReader();
-            
-            reader.onloadend = function() {
-                const base64Image = reader.result;
-                
-                // Yeni logo objesini oluştur
+            reader.onload = (event) => {
                 const newLogo = {
-                    // Benzersiz ID oluştur
-                    id: 'local-' + Date.now(), 
-                    name: document.getElementById('logo-name').value,
-                    detail_desc: document.getElementById('logo-desc').value,
-                    price: parseFloat(document.getElementById('logo-price').value),
-                    url: base64Image, // Base64 verisi direkt URL olarak saklanıyor
+                    id: Date.now().toString(), 
+                    name: logoNameInput.value,
+                    description: logoDescriptionInput.value,
+                    price: parseFloat(logoPriceInput.value),
+                    image: event.target.result 
                 };
-
-                // Logoyu global listeye ekle
-                logoData.push(newLogo);
-
-                // LocalStorage'a kaydet
-                saveLogos(); 
-
-                closeAdminPanel();
-                renderLogos(logoData); // Galeriyi yenile
-                showMessageModal('alert_logo_added');
+                logos.push(newLogo);
+                saveLogos();
+                addLogoForm.reset(); 
+                imagePreview.classList.add('hidden');
+                console.log("Logo başarıyla eklendi!"); 
             };
-            
             reader.readAsDataURL(file);
-        }
-        
-        // --- Uygulama Başlangıcı ---
-        function initApp() {
-            applyTranslations();
-            loadLogos(); // LocalStorage'dan logoları yükle
-        }
+        });
 
-        window.onload = initApp;
+        // Logo Detay Modalını kapatma
+        closeDetailModal.addEventListener('click', () => {
+            logoDetailModal.classList.add('hidden'); 
+        });
 
+        // Sepete Ekle butonu (detay modalında)
+        addToCartButton.addEventListener('click', () => {
+            if (currentSelectedLogo) {
+                addToCart(currentSelectedLogo);
+            }
+        });
+
+        // Sepet butonuna tıklama
+        cartButton.addEventListener('click', () => {
+            cartModal.classList.remove('hidden'); 
+            renderCartItems(); 
+        });
+
+        // Sepet Modalını kapatma
+        closeCartModal.addEventListener('click', () => {
+            cartModal.classList.add('hidden'); 
+        });
+
+        // WhatsApp ile Siparişi Tamamla butonu
+        checkoutButton.addEventListener('click', generateWhatsAppMessage);
+
+
+        // Sayfa yüklendiğinde logoları, sepeti yükle ve dili ayarla
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLang); 
+            renderLogos();
+            updateCartCount();
+        });
     </script>
 </body>
 </html>
