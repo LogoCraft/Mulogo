@@ -6,7 +6,7 @@
     <title id="page-title"></title>
     <!-- Tailwind CSS Yükleniyor -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
         /* Ana Renk Teması: Siyah ve Turuncu */
         :root {
@@ -83,7 +83,7 @@
             <!-- Ayarlar Butonu (Sol Köşe) -->
             <div id="settings-menu" class="relative">
                 <button onclick="toggleSettings()" class="glow-shadow bg-orange-600 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.942 3.313.823 2.306 2.306a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.942 1.543-.823 3.313-2.306 2.306a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.942-3.313-.823-2.306-2.306a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.942-1.543.823-3.313 2.306-2.306a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.942 3.313.823 2.306 2.306a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.942 1.543-.823 3.313-2.306 2.306a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.942-3.313-.823-2.306-2.306a1.724 1.724 0 002.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
                     <span id="settings-btn-text"></span>
                 </button>
                 
@@ -202,42 +202,39 @@
     <!-- Custom Confirm Modal for Deletion -->
     <div id="confirm-modal" class="hidden fixed inset-0 modal-bg z-50 flex items-center justify-center">
         <div class="bg-gray-800 p-6 rounded-xl max-w-xs w-full glow-shadow border border-orange-700">
-            <p id="confirm-text" class="text-white text-center mb-4">Bu logoyu silmek istediğinizden emin misiniz?</p>
+            <p id="confirm-text" class="text-white text-center mb-4"></p>
             <div class="flex justify-between space-x-4">
-                <button onclick="executeDelete()" id="confirm-yes-btn" class="flex-1 glow-shadow bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition duration-200">Evet, Sil</button>
-                <button onclick="closeConfirmModal()" id="confirm-no-btn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 rounded-lg transition duration-200">İptal</button>
+                <button onclick="executeDelete()" id="confirm-yes-btn" class="flex-1 glow-shadow bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-lg transition duration-200"></button>
+                <button onclick="closeConfirmModal()" id="confirm-no-btn" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-2 rounded-lg transition duration-200"></button>
             </div>
         </div>
     </div>
 
     <!-- JavaScript Alanı -->
-    <script type="module">
-        // Firebase Modülleri İçe Aktarılıyor
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, collection, query, onSnapshot, setDoc, addDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firestore Debug loglarını etkinleştir
-        setLogLevel('debug');
+    <script>
         
-        // --- Sabitler ve Global Değişkenler ---
+        // --- Sabitler ve Global Değişkenler (Firebase kaldırıldı) ---
         const WHATSAPP_NUMBER = '994707841414';
         const ADMIN_PASSWORD = '1975';
+        const LOCAL_STORAGE_KEY = 'muLogoYapLogos'; // LocalStorage anahtarı
         
-        let firebaseApp;
-        let db;
-        let auth;
-        let appId;
-        let logoData = []; // Gerçek zamanlı olarak Firestore'dan güncellenen logolar
+        let logoData = []; // Yerel depodan yüklenecek logolar
         let currentLogoId = null;
         let isAdminLoggedIn = false; // Admin giriş durumu takip ediliyor (Yerel)
-
+        
+        // Varsayılan Mock Logolar (Local Storage boşsa bunlar yüklenecektir)
+        const initialMockLogos = [
+            { id: 'logo1', name: 'Flame Vortex', price: 49, url: 'https://placehold.co/400x300/f97316/ffffff?text=Flame+Logo', detail_desc: 'Enerji ve hareketliliği temsil eden dinamik alevli girdap logosu.' },
+            { id: 'logo2', name: 'Tech Shield', price: 75, url: 'https://placehold.co/400x300/1e293b/ffffff?text=Shield+Logo', detail_desc: 'Güvenlik ve yenilikçilik mesajı veren modern, mavi tonlarda bir kalkan logosu.' },
+            { id: 'logo3', name: 'Golden Hour', price: 60, url: 'https://placehold.co/400x300/ca8a04/ffffff?text=Sun+Logo', detail_desc: 'Güneşin doğuşunu simgeleyen, sıcak renklerde minimalist bir tasarım.' },
+            { id: 'logo4', name: 'Abstract Wave', price: 55, url: 'https://placehold.co/400x300/3b82f6/ffffff?text=Wave+Logo', detail_desc: 'Sakinlik ve akışkanlık temalı, soyut mavi dalga logosu.' }
+        ];
 
         const LANGUAGES = {
             'tr': {
-                title: 'MuLogo Dijital Galeri', // SAYFA BAŞLIĞI GÜNCELLENDİ
+                title: 'MuLogo Yap Dijital Galeri',
                 settings: 'Ayarlar',
-                main_gallery: 'MuLogo', // ANA BAŞLIK GÜNCELLENDİ
+                main_gallery: 'MuLogo Yap',
                 detail_title: 'Logo Detayı',
                 about: 'Açıklama',
                 price: 'Fiyat',
@@ -260,8 +257,8 @@
                 cancel: 'İptal',
                 ok_button: 'Tamam',
                 alert_password_fail: 'Hatalı Şifre!',
-                alert_logo_added: 'Logo başarıyla eklendi ve tüm kullanıcılara görünüyor!',
-                alert_logo_deleted: 'Logo başarıyla silindi ve tüm kullanıcılardan kaldırıldı!',
+                alert_logo_added: 'Logo başarıyla eklendi!',
+                alert_logo_deleted: 'Logo başarıyla silindi!',
                 alert_no_logo: 'Gösterilecek logo bulunamadı.',
                 alert_no_file: 'Lütfen bir resim dosyası seçin.',
                 confirm_delete_text: 'Bu logoyu kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.',
@@ -294,8 +291,8 @@
                 cancel: 'Ləğv Et',
                 ok_button: 'Oldu',
                 alert_password_fail: 'Səhv Parol!',
-                alert_logo_added: 'Loqo uğurla əlavə edildi və bütün istifadəçilərə görünür!',
-                alert_logo_deleted: 'Loqo uğurla silindi və bütün istifadəçilərdən silindi!',
+                alert_logo_added: 'Loqo uğurla əlavə edildi!',
+                alert_logo_deleted: 'Loqo uğurla silindi!',
                 alert_no_logo: 'Göstəriləcək loqo tapılmadı.',
                 alert_no_file: 'Zəhmət olmasa bir şəkil faylı seçin.',
                 confirm_delete_text: 'Bu loqonu birdəfəlik silmək istədiyinizə əminsiniz? Bu əməliyyat geri alına bilməz.',
@@ -328,8 +325,8 @@
                 cancel: 'Cancel',
                 ok_button: 'OK',
                 alert_password_fail: 'Wrong Password!',
-                alert_logo_added: 'Logo successfully added and is visible to all users!',
-                alert_logo_deleted: 'Logo successfully deleted and removed from all users!',
+                alert_logo_added: 'Logo successfully added!',
+                alert_logo_deleted: 'Logo successfully deleted!',
                 alert_no_logo: 'No logos found to display.',
                 alert_no_file: 'Please select an image file.',
                 confirm_delete_text: 'Are you sure you want to permanently delete this logo? This action cannot be undone.',
@@ -341,59 +338,31 @@
         let currentLang = localStorage.getItem('siteLang') || 'tr';
         let translations = LANGUAGES[currentLang];
 
-        // --- Firebase İstemci Kurulumu ---
-        async function setupFirebase() {
-            try {
-                // Global değişkenler zorunludur
-                appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-                const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        // --- LocalStorage Veri Yönetimi Fonksiyonları ---
 
-                firebaseApp = initializeApp(firebaseConfig);
-                db = getFirestore(firebaseApp);
-                auth = getAuth(firebaseApp);
-
-                // Oturum Açma
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
+        // Logoları LocalStorage'dan yükler
+        function loadLogos() {
+            const storedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+            if (storedData) {
+                try {
+                    logoData = JSON.parse(storedData);
+                } catch (e) {
+                    console.error("Local storage verisi bozuk, varsayılan veri kullanılıyor.", e);
+                    logoData = initialMockLogos;
+                    saveLogos(); 
                 }
-                
-                // Firestore dinleyicisini başlat
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                         listenForLogos();
-                    } else {
-                        // Eğer auth yoksa bile anonim giriş başarılı olmuştur, dinlemeye başla
-                         listenForLogos(); 
-                    }
-                });
-
-            } catch (error) {
-                console.error("Firebase kurulumu veya kimlik doğrulama başarısız:", error);
-                // Hata durumunda bile varsayılan logoyu göster (veri yoksa)
-                renderLogos([]); 
+            } else {
+                // İlk çalıştırma: Mock data kullan ve kaydet
+                logoData = initialMockLogos;
+                saveLogos();
             }
+            renderLogos(logoData);
         }
 
-        // --- Firestore Veri Dinleyicisi (onSnapshot) ---
-        function listenForLogos() {
-            const logosCollectionRef = collection(db, "artifacts", appId, "public", "data", "logos");
-            const q = query(logosCollectionRef);
-
-            // Gerçek zamanlı dinleyiciyi başlat
-            onSnapshot(q, (snapshot) => {
-                logoData = [];
-                snapshot.forEach((doc) => {
-                    logoData.push({ id: doc.id, ...doc.data() });
-                });
-                renderLogos(logoData); // Veri değiştikçe galeriyi yeniden çiz
-            }, (error) => {
-                console.error("Firestore verilerini dinlerken hata oluştu:", error);
-                showMessageModal('alert_no_logo'); 
-            });
+        // Logoları LocalStorage'a kaydeder
+        function saveLogos() {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(logoData));
         }
-
 
         // --- Mesaj ve Onay Modalı Fonksiyonları ---
         function showMessageModal(messageKey) {
@@ -420,19 +389,25 @@
             currentLogoId = null;
         }
 
-        async function executeDelete() {
+        function executeDelete() {
             closeConfirmModal();
-            if (!isAdminLoggedIn || !currentLogoId || !db) return;
+            if (!isAdminLoggedIn || !currentLogoId) return;
 
-            try {
-                await deleteDoc(doc(db, "artifacts", appId, "public", "data", "logos", currentLogoId));
-                showMessageModal('alert_logo_deleted');
-                closeDetailModal();
-                currentLogoId = null;
-            } catch (error) {
-                console.error("Logo silinirken hata oluştu:", error);
-                showMessageModal('alert_no_logo'); // Hata mesajı gösterimi için geçici anahtar
+            // LocalStorage'dan silme işlemi
+            const initialLength = logoData.length;
+            logoData = logoData.filter(l => l.id !== currentLogoId);
+            
+            if (logoData.length < initialLength) {
+                 saveLogos(); // Local Storage'a kaydet
+                 showMessageModal('alert_logo_deleted');
+                 closeDetailModal();
+                 renderLogos(logoData); // Galeriyi yenile
+            } else {
+                console.error("Silinecek logo bulunamadı.");
+                showMessageModal('alert_no_logo'); 
             }
+
+            currentLogoId = null;
         }
 
 
@@ -443,7 +418,7 @@
             localStorage.setItem('siteLang', lang);
             translations = LANGUAGES[currentLang];
             applyTranslations();
-            renderLogos(logoData); // Firebase'den gelen veriyi yeniden çiz
+            renderLogos(logoData); // Veriyi yeniden çiz
         }
 
         function applyTranslations() {
@@ -467,7 +442,7 @@
             document.getElementById('enter-btn').textContent = translations.enter;
             document.getElementById('cancel-btn').textContent = translations.cancel;
             
-            // Delete Butonu Metni
+            // Detay Modal
             document.getElementById('delete-logo-btn').textContent = translations.delete_logo;
             document.getElementById('order-whatsapp-btn').textContent = translations.add_to_cart;
             document.getElementById('about-heading').textContent = translations.about;
@@ -484,7 +459,7 @@
             gallery.innerHTML = '';
 
             if (logos.length === 0) {
-                gallery.innerHTML = <p class="col-span-full text-center text-gray-500 mt-10">${translations.alert_no_logo}</p>;
+                gallery.innerHTML = `<p class="col-span-full text-center text-gray-500 mt-10">${translations.alert_no_logo}</p>`;
                 return;
             }
 
@@ -510,16 +485,14 @@
         // --- Detay Modalı Fonksiyonları ---
 
         function showDetailModal(id) {
-            const logo = logoData.find(l => l.id === id); // logoData global state'i kullan
+            const logo = logoData.find(l => l.id === id); 
             if (!logo) return;
             
             currentLogoId = id;
 
             document.getElementById('modal-title').textContent = logo.name;
-            
-            // low-quality-logo class'ı detay resimde de uygulanıyor
             document.getElementById('detail-image').src = logo.url; 
-            document.getElementById('modal-price').textContent = ${translations.price}: $${logo.price};
+            document.getElementById('modal-price').textContent = `${translations.price}: $${logo.price}`;
             
             // Metinler
             document.getElementById('modal-about-text').textContent = logo.detail_desc || translations.placeholder_detail_desc;
@@ -550,13 +523,13 @@
             if (!logo) return;
 
             const message = encodeURIComponent(
-                ${translations.add_to_cart}!\n\n +
-                ${translations.logo_name}: ${logo.name}\n +
-                ${translations.price}: $${logo.price}\n\n +
-                Lütfen bu logo hakkında detaylı bilgi ve satın alma süreci için bana yardımcı olun.
+                `${translations.add_to_cart}!\n\n` +
+                `${translations.logo_name}: ${logo.name}\n` +
+                `${translations.price}: $${logo.price}\n\n` +
+                `Lütfen bu logo hakkında detaylı bilgi ve satın alma süreci için bana yardımcı olun.`
             );
 
-            const waLink = https://wa.me/${WHATSAPP_NUMBER}?text=${message};
+            const waLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${message}`;
             window.open(waLink, '_blank');
         }
 
@@ -574,6 +547,7 @@
                 document.getElementById('password-modal').classList.add('hidden');
                 document.getElementById('admin-password').value = '';
                 openAdminPanel();
+                renderLogos(logoData); // Admin butonları için gerekebilir
             } else {
                 isAdminLoggedIn = false;
                 showMessageModal('alert_password_fail');
@@ -584,16 +558,16 @@
         function openAdminPanel() {
             document.getElementById('admin-panel').classList.remove('hidden');
             document.getElementById('logo-form').reset();
-            // Logo file input'unu zorunlu yap, aksi takdirde dosya seçilmezse hata verir.
             document.getElementById('logo-file-input').required = true;
         }
 
         function closeAdminPanel() {
             isAdminLoggedIn = false; // Çıkış yapıldığında admin durumunu sıfırla
             document.getElementById('admin-panel').classList.add('hidden');
+            renderLogos(logoData); // Admin butonları gizlensin
         }
 
-        // --- Dosya Yükleme ve Firestore Kaydı ---
+        // --- Dosya Yükleme ve LocalStorage Kaydı ---
         
         function handleLogoFormSubmission(event) {
             event.preventDefault();
@@ -610,73 +584,38 @@
             
             reader.onloadend = function() {
                 const base64Image = reader.result;
-                addLogo(base64Image);
-            };
+                
+                // Yeni logo objesini oluştur
+                const newLogo = {
+                    // Benzersiz ID oluştur
+                    id: 'local-' + Date.now(), 
+                    name: document.getElementById('logo-name').value,
+                    detail_desc: document.getElementById('logo-desc').value,
+                    price: parseFloat(document.getElementById('logo-price').value),
+                    url: base64Image, // Base64 verisi direkt URL olarak saklanıyor
+                };
 
-            reader.onerror = function() {
-                console.error("Dosya okuma hatası.");
-                showMessageModal('alert_no_file'); 
-            };
+                // Logoyu global listeye ekle
+                logoData.push(newLogo);
 
-            reader.readAsDataURL(file); // Dosyayı Base64 formatına çevir
-        }
+                // LocalStorage'a kaydet
+                saveLogos(); 
 
-
-        async function addLogo(base64Image) {
-            if (!db) return; // DB yoksa çık
-
-            const name = document.getElementById('logo-name').value;
-            const desc = document.getElementById('logo-desc').value;
-            const price = parseFloat(document.getElementById('logo-price').value);
-            
-            const newLogo = {
-                name,
-                desc,
-                price,
-                // Base64 veri, hem düşük (galeri) hem de yüksek (detay) kalitede kullanılıyor.
-                url: base64Image,
-                detail_url: base64Image, 
-                detail_desc: desc,
-                createdAt: new Date().toISOString()
-            };
-
-            try {
-                // Firestore'a ekle (otomatik ID al)
-                const logosCollectionRef = collection(db, "artifacts", appId, "public", "data", "logos");
-                await addDoc(logosCollectionRef, newLogo);
-
-                showMessageModal('alert_logo_added');
                 closeAdminPanel();
-                // renderLogos onSnapshot tarafından otomatik olarak çağrılacak
-            } catch (error) {
-                console.error("Logoyu Firestore'a eklerken hata oluştu:", error);
-                // Kullanıcıya genel bir hata mesajı göstermek için
-                showMessageModal('alert_no_logo'); 
-            }
+                renderLogos(logoData); // Galeriyi yenile
+                showMessageModal('alert_logo_added');
+            };
+            
+            reader.readAsDataURL(file);
+        }
+        
+        // --- Uygulama Başlangıcı ---
+        function initApp() {
+            applyTranslations();
+            loadLogos(); // LocalStorage'dan logoları yükle
         }
 
-        // --- Dışa Aktarılan Fonksiyonlar (HTML ile etkileşim için) ---
-        // Bu fonksiyonlar, modül içinden window nesnesine eklenerek HTML'deki onclick gibi event handler'ların erişimine açılır.
-        window.toggleSettings = toggleSettings;
-        window.setLanguage = setLanguage;
-        window.handleLogoFormSubmission = handleLogoFormSubmission;
-        window.closeAdminPanel = closeAdminPanel;
-        window.closeDetailModal = closeDetailModal;
-        window.orderViaWhatsApp = orderViaWhatsApp;
-        window.showAdminLogin = showAdminLogin;
-        window.checkPassword = checkPassword;
-        window.closeMessageModal = closeMessageModal;
-        window.confirmDelete = confirmDelete;
-        window.closeConfirmModal = closeConfirmModal;
-        window.executeDelete = executeDelete;
-
-        // --- Başlangıç Fonksiyonu ---
-
-        window.onload = function() {
-            applyTranslations();
-            setupFirebase(); // Firebase kurulumunu başlat
-            // renderLogos, Firebase onSnapshot tarafından çağrılacaktır.
-        };
+        window.onload = initApp;
 
     </script>
 </body>
