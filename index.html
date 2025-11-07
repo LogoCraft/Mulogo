@@ -13,10 +13,12 @@
             font-family: 'Inter', sans-serif;
             background-color: #0d0d0d;
         }
+        /* Canlı Mavi Tonlar */
         .text-custom-blue { color: #60a5fa; } 
         .bg-custom-blue { background-color: #3b82f6; } 
         .hover\:bg-custom-blue-dark:hover { background-color: #2563eb; }
 
+        /* Aydınlatma Efekti */
         .glow-effect {
             box-shadow: 0 0 20px rgba(96, 165, 250, 0.7), 0 0 40px rgba(96, 165, 250, 0.4);
             transition: all 0.4s ease-in-out;
@@ -30,24 +32,20 @@
             backdrop-filter: blur(5px);
             border: 1px solid rgba(96, 165, 250, 0.3);
         }
-        .logo-card:hover {
-            border-color: rgba(96, 165, 250, 0.7);
-        }
+        
+        /* Bulanıklık Optimizasyonu */
+        /* Ana ekranda logo: Hafif bulanık (görülür ama SS alınamaz) */
+        .blur-light-main { filter: blur(2px); }
+        /* Detay modalında logo: Çok az bulanık (neredeyse net) */
+        .blur-very-light-detail { filter: blur(1px); }
 
-        /* Scrollbar stilleri */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: #1a202c; }
-        ::-webkit-scrollbar-thumb { background: #60a5fa; border-radius: 5px; }
-        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
+        .logo-card:hover .blur-light-main {
+            filter: blur(1px); /* Hover'da daha net görünmesi için ekstra iyileştirme */
+        }
 
         /* WhatsApp İkonu */
-        .whatsapp-icon {
-            fill: white;
-            transition: transform 0.3s ease;
-        }
-        .whatsapp-button:hover .whatsapp-icon {
-            transform: rotate(10deg) scale(1.05);
-        }
+        .whatsapp-icon { fill: white; transition: transform 0.3s ease; }
+        .whatsapp-button:hover .whatsapp-icon { transform: rotate(10deg) scale(1.05); }
 
         @keyframes blob {
             0% { transform: translate(0px, 0px) scale(1); }
@@ -77,7 +75,7 @@
                 <a href="#iletisim" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navContact">İletişim</a>
             </nav>
 
-            <!-- Dil Seçici -->
+            <!-- Dil Seçici ve Sepet -->
             <div class="flex items-center space-x-3">
                 <div id="languageSelector" class="flex space-x-2">
                     <button class="lang-btn" data-lang="tr" title="Türkçe">
@@ -145,7 +143,7 @@
             
             <div id="logoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                 
-                <p class="text-center col-span-full text-gray-400" data-lang-key="loading">Yükleniyor...</p>
+                <p class="text-center col-span-full text-gray-400" data-lang-key="loading">Logolar Yükleniyor...</p>
             </div>
         </div>
     </section>
@@ -189,7 +187,7 @@
         </div>
     </section>
 
-    <!-- İletişim Bölümü (WhatsApp Butonu ile değiştirildi) -->
+    <!-- İletişim Bölümü (WhatsApp Butonu) -->
     <section id="iletisim" class="py-16 md:py-24 bg-gradient-to-t from-black to-gray-900">
         <div class="container mx-auto px-4 max-w-2xl">
             <h2 class="text-4xl font-bold text-center mb-12 text-custom-blue drop-shadow-lg" data-lang-key="contactTitle">Bize Ulaşın</h2>
@@ -273,7 +271,7 @@
                     <h3 class="text-2xl font-semibold mb-6 text-custom-blue" data-lang-key="adminCurrentLogos">Mevcut Logolar</h3>
                     <ul id="adminLogoList" class="space-y-4">
                         
-                        <li class="text-gray-400" data-lang-key="adminNoLogo">Henüz logo eklenmedi.</li>
+                        <li class="text-gray-400" data-lang-key="adminNoLogo">Logolar Yükleniyor...</li>
                     </ul>
                 </div>
             </div>
@@ -284,8 +282,8 @@
     <div id="logoDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
         <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-2xl border border-custom-blue/50 relative">
             <button id="closeDetailModal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">&times;</button>
-            <!-- Detay modalındaki görselde blur olmayacak -->
-            <img id="detailImage" src="#" alt="Logo Detay" class="w-full h-64 object-contain mb-6 rounded-lg bg-gray-900 p-2 border border-gray-700">
+            <!-- Detay modalında görsel çok az bulanık -->
+            <img id="detailImage" src="#" alt="Logo Detay" class="w-full h-64 object-contain mb-6 rounded-lg bg-gray-900 p-2 border border-gray-700 blur-very-light-detail">
             <h3 id="detailName" class="text-3xl font-bold mb-2 text-custom-blue"></h3>
             <p id="detailDescription" class="text-gray-300 mb-4"></p>
             <p class="text-xl font-bold text-custom-blue mb-6"><span id="detailPrice"></span> USD</p>
@@ -313,107 +311,85 @@
 
 
     
-    <script>
+    <script type="module">
+        // --- Firebase SDK Imports ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, collection, query, addDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- Sabitler ---
         const ADMIN_PASSWORD = "1975";
         const WHATSAPP_NUMBER = "994707841414"; 
 
-        let logos = JSON.parse(localStorage.getItem('mu_logos')) || [];
+        // Kullanıcının Sağladığı Firebase Yapılandırması
+        const FIREBASE_CONFIG = {
+            apiKey: "AIzaSyAKJSmx2_1RPVtvnnJT-49Nz8SGUPrvH0c",
+            authDomain: "mulogo-b941c.firebaseapp.com",
+            projectId: "mulogo-b941c",
+            storageBucket: "mulogo-b941c.firebasestorage.app",
+            messagingSenderId: "382222540163",
+            appId: "1:382222540163:web:09a21543065fa0c469eab6" 
+        };
+
+        // --- Global Firebase & Data Durumları ---
+        let app = null;
+        let db = null;
+        let auth = null;
+        let userId = null;
+        let logos = []; // Logos will be populated by Firestore onSnapshot
         let cart = JSON.parse(localStorage.getItem('mu_cart')) || [];
         let currentLang = localStorage.getItem('mu_lang') || 'tr'; 
 
-        // --- Çeviri Objesi ---
+        // --- Düzeltilmiş ve Doğru Çeviriler (Tüm Metinleri İçerir) ---
         const translations = {
             tr: {
-                pageTitle: "MuLogo | Eşsiz Logo Tasarımları",
-                navHome: "Anasayfa", navLogos: "Logolarımız", navAbout: "Hakkımızda", navContact: "İletişim",
-                heroTitle: 'Markanıza <span class="text-custom-blue glow-effect">Işık Katın</span>',
-                heroSubtitle: "MuLogo'da, işinizin özünü yansıtan, modern ve akılda kalıcı logolar tasarlıyor ve satışa sunuyoruz.",
-                btnExplore: "Koleksiyonu Keşfet", loading: "Yükleniyor...",
-                galleryTitle: "Eşsiz Logo Koleksiyonumuz", gallerySubtitle: "Her biri özenle tasarlanmış, hemen kullanıma hazır logolar.",
-                aboutTitle: "Neden MuLogo?",
-                feature1Title: "Hazır ve Hızlı Teslimat", feature1Text: "Satın aldığınız logoyu anında yüksek çözünürlüklü ve vektörel formatlarda (AI, EPS, SVG) teslim ediyoruz.",
+                pageTitle: "MuLogo | Eşsiz Logo Tasarımları", navHome: "Anasayfa", navLogos: "Logolarımız", navAbout: "Hakkımızda", navContact: "İletişim",
+                heroTitle: 'Markanıza <span class="text-custom-blue glow-effect">Işık Katın</span>', heroSubtitle: "MuLogo'da, işinizin özünü yansıtan, modern ve akılda kalıcı logolar tasarlıyor ve satışa sunuyoruz.",
+                btnExplore: "Koleksiyonu Keşfet", loading: "Logolar Yükleniyor...", galleryTitle: "Eşsiz Logo Koleksiyonumuz", gallerySubtitle: "Her biri özenle tasarlanmış, hemen kullanıma hazır logolar.",
+                aboutTitle: "Neden MuLogo?", feature1Title: "Hazır ve Hızlı Teslimat", feature1Text: "Satın aldığınız logoyu anında yüksek çözünürlüklü ve vektörel formatlarda (AI, EPS, SVG) teslim ediyoruz.",
                 feature2Title: "Tam Telif Hakkı", feature2Text: "Logoyu satın aldığınızda, ticari kullanıma yönelik tüm telif hakları ve sahiplik size geçer.",
                 feature3Title: "Özel Destek", feature3Text: "Logo seçimi, özelleştirme veya herhangi bir sorunuz için özel destek sağlıyoruz.",
-                contactTitle: "Bize Ulaşın", contactCta: "Anında destek, sipariş veya özel istekleriniz için bize hemen WhatsApp üzerinden ulaşın.",
-                btnWhatsApp: "WhatsApp ile İletişim",
-                footerText: "© 2025 MuLogo. Tüm hakları saklıdır. | Aydınlatılmış Logo Tasarımları.",
-                btnCart: "Sepetim",
-                // Modals
-                adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifre", btnLogin: "Giriş Yap", btnCancel: "İptal", loginError: "Yanlış şifre!",
-                adminPanelTitle: "Admin Paneli", btnLogout: "Çıkış Yap", adminAddLogoTitle: "Yeni Logo Ekle",
-                adminLogoName: "Logo Adı", adminLogoDesc: "Açıklama", adminLogoPrice: "Fiyat (USD)", adminLogoImage: "Logo Görseli", adminBtnAddLogo: "Logoyu Ekle",
-                adminCurrentLogos: "Mevcut Logolar", adminNoLogo: "Henüz logo eklenmedi.",
-                logoCardButton: "Detayları İncele",
-                btnAddToCart: "Sepete Ekle",
-                cartTitle: "Sepetim", cartTotal: "Toplam:", btnCheckout: "WhatsApp ile Siparişi Tamamla", cartEmpty: "Sepetiniz boş.",
-                addedToCart: "Sepete Eklendi!"
+                contactTitle: "Bize Ulaşın", contactCta: "Anında destek, sipariş veya özel istekleriniz için bize hemen WhatsApp üzerinden ulaşın.", btnWhatsApp: "WhatsApp ile İletişim", footerText: "© 2025 MuLogo. Tüm hakları saklıdır. | Aydınlatılmış Logo Tasarımları.",
+                btnCart: "Sepetim", adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifre", btnLogin: "Giriş Yap", btnCancel: "İptal", loginError: "Yanlış şifre!",
+                adminPanelTitle: "Admin Paneli", btnLogout: "Çıkış Yap", adminAddLogoTitle: "Yeni Logo Ekle", adminLogoName: "Logo Adı", adminLogoDesc: "Açıklama", adminLogoPrice: "Fiyat (USD)", adminLogoImage: "Logo Görseli", adminBtnAddLogo: "Logoyu Ekle",
+                adminCurrentLogos: "Mevcut Logolar", adminNoLogo: "Henüz logo eklenmedi.", logoCardButton: "Detayları İncele", btnAddToCart: "Sepete Ekle", cartTitle: "Sepetim", cartTotal: "Toplam:", btnCheckout: "WhatsApp ile Siparişi Tamamla", cartEmpty: "Sepetiniz boş.", addedToCart: "Sepete Eklendi!"
             },
             en: {
-                pageTitle: "MuLogo | Unique Logo Designs",
-                navHome: "Homepage", navLogos: "Our Logos", navAbout: "About Us", navContact: "Contact",
-                heroTitle: 'Illuminate Your <span class="text-custom-blue glow-effect">Brand</span>',
-                heroSubtitle: "At MuLogo, we design and sell modern, memorable logos that reflect the essence of your business.",
-                btnExplore: "Explore Collection", loading: "Loading...",
-                galleryTitle: "Our Unique Logo Collection", gallerySubtitle: "Ready-to-use logos, each carefully crafted.",
-                aboutTitle: "Why MuLogo?",
-                feature1Title: "Instant and Fast Delivery", feature1Text: "We deliver your purchased logo instantly in high-resolution vector formats (AI, EPS, SVG).",
-                feature2Title: "Full Copyright", feature2Text: "When you purchase the logo, all commercial copyrights and ownership are transferred to you.",
-                feature3Title: "Dedicated Support", feature3Text: "We provide dedicated support for logo selection, customization, or any questions you may have.",
-                contactTitle: "Contact Us", contactCta: "For immediate support, orders, or special requests, reach out to us directly via WhatsApp.",
-                btnWhatsApp: "Contact via WhatsApp",
-                footerText: "© 2025 MuLogo. All rights reserved. | Illuminated Logo Designs.",
-                btnCart: "My Cart",
-                // Modals
-                adminLogin: "Admin Login", adminLoginTitle: "Admin Login", placeholderPassword: "Password", btnLogin: "Login", btnCancel: "Cancel", loginError: "Incorrect password!",
-                adminPanelTitle: "Admin Panel", btnLogout: "Logout", adminAddLogoTitle: "Add New Logo",
-                adminLogoName: "Logo Name", adminLogoDesc: "Description", adminLogoPrice: "Price (USD)", adminLogoImage: "Logo Image", adminBtnAddLogo: "Add Logo",
-                adminCurrentLogos: "Current Logos", adminNoLogo: "No logos added yet.",
-                logoCardButton: "View Details",
-                btnAddToCart: "Add to Cart",
-                cartTitle: "My Cart", cartTotal: "Total:", btnCheckout: "Complete Order via WhatsApp", cartEmpty: "Your cart is empty.",
-                addedToCart: "Added to Cart!"
+                pageTitle: "MuLogo | Unique Logo Designs", navHome: "Home", navLogos: "Our Logos", navAbout: "About Us", navContact: "Contact",
+                heroTitle: 'Illuminate Your <span class="text-custom-blue glow-effect">Brand</span>', heroSubtitle: "At MuLogo, we design and sell modern, memorable, ready-to-use logos that capture the essence of your business.",
+                btnExplore: "Explore Collection", loading: "Logos are Loading...", galleryTitle: "Our Exclusive Logo Collection", gallerySubtitle: "Ready-to-use logos, each carefully crafted by experts.",
+                aboutTitle: "Why Choose MuLogo?", feature1Title: "Instant and Fast Delivery", feature1Text: "Get your purchased logo instantly in high-resolution vector formats (AI, EPS, SVG).",
+                feature2Title: "Full Copyright Ownership", feature2Text: "Upon purchase, all commercial copyrights and ownership are fully transferred to you.",
+                feature3Title: "Dedicated Support", feature3Text: "We provide dedicated support for logo selection, customization, and any questions you may have.",
+                contactTitle: "Get in Touch", contactCta: "For immediate support, orders, or custom requests, reach out to us directly via WhatsApp.", btnWhatsApp: "Contact via WhatsApp", footerText: "© 2025 MuLogo. All rights reserved. | Illuminated Logo Designs.",
+                btnCart: "My Cart", adminLogin: "Admin Login", adminLoginTitle: "Admin Login", placeholderPassword: "Password", btnLogin: "Login", btnCancel: "Cancel", loginError: "Incorrect Password!",
+                adminPanelTitle: "Admin Panel", btnLogout: "Logout", adminAddLogoTitle: "Add New Logo", adminLogoName: "Logo Name", adminLogoDesc: "Description", adminLogoPrice: "Price (USD)", adminLogoImage: "Logo Image", adminBtnAddLogo: "Add Logo",
+                adminCurrentLogos: "Current Logos", adminNoLogo: "No logos added yet.", logoCardButton: "View Details", btnAddToCart: "Add to Cart", cartTitle: "My Cart", cartTotal: "Total:", btnCheckout: "Complete Order via WhatsApp", cartEmpty: "Your cart is empty.", addedToCart: "Added to Cart!"
             },
             az: {
-                pageTitle: "MuLogo | Misilsiz Loqo Dizaynları",
-                navHome: "Ana Səhifə", navLogos: "Loqolarımız", navAbout: "Haqqımızda", navContact: "Əlaqə",
-                heroTitle: 'Brendinizə <span class="text-custom-blue glow-effect">İşıq Qatın</span>',
-                heroSubtitle: "MuLogo-da biz, biznesinizin əsasını əks etdirən, müasir və yadda qalan loqolar dizayn edir və satışa çıxarırıq.",
-                btnExplore: "Kolleksiyaya Bax", loading: "Yüklənir...",
-                galleryTitle: "Misilsiz Loqo Kolleksiyamız", gallerySubtitle: "Hər biri diqqətlə hazırlanmış, dərhal istifadəyə hazır loqolar.",
-                aboutTitle: "Niyə MuLogo?",
-                feature1Title: "Hazır və Sürətli Təhvil", feature1Text: "Aldığınız loqonu dərhal yüksək keyfiyyətli vektor formatlarında (AI, EPS, SVG) təhvil veririk.",
-                feature2Title: "Tam Müəllif Hüququ", feature2Text: "Loqonu aldığınız zaman, ticari istifadə üçün bütün müəllif hüquqları sizə keçir.",
+                pageTitle: "MuLogo | Misilsiz Loqo Dizaynları", navHome: "Ana Səhifə", navLogos: "Loqolarımız", navAbout: "Haqqımızda", navContact: "Əlaqə",
+                heroTitle: 'Brendinizə <span class="text-custom-blue glow-effect">İşıq Qatın</span>', heroSubtitle: "MuLogo-da biz, biznesinizin əsasını əks etdirən, müasir və yadda qalan loqolar dizayn edir və satışa çıxarırıq.",
+                btnExplore: "Kolleksiyaya Bax", loading: "Loqolar Yüklənir...", galleryTitle: "Misilsiz Loqo Kolleksiyamız", gallerySubtitle: "Hər biri diqqətlə hazırlanmış, dərhal istifadəyə hazır loqolar.",
+                aboutTitle: "Niyə MuLogo?", feature1Title: "Hazır və Sürətli Təhvil", feature1Text: "Aldığınız loqonu dərhal yüksək keyfiyyətli vektor formatlarında (AI, EPS, SVG) təhvil veririk.",
+                feature2Title: "Tam Müəllif Hüququ", feature2Text: "Loqonu aldığınız zaman, ticari istifadə üçün bütün müəllif hüquqları və mülkiyyət sizə keçir.",
                 feature3Title: "Xüsusi Dəstək", feature3Text: "Loqo seçimi, fərdiləşdirmə və ya hər hansı suallarınız üçün xüsusi dəstək təmin edirik.",
-                contactTitle: "Bizimlə Əlaqə", contactCta: "Dərhal dəstək, sifariş və ya xüsusi istəkləriniz üçün bizə birbaşa WhatsApp üzərindən müraciət edin.",
-                btnWhatsApp: "WhatsApp ilə Əlaqə",
-                footerText: "© 2025 MuLogo. Bütün hüquqlar qorunur. | İşıqlandırılmış Loqo Dizaynları.",
-                btnCart: "Səbətim",
-                // Modals
-                adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifrə", btnLogin: "Daxil Ol", btnCancel: "Ləğv Et", loginError: "Yanlış şifrə!",
-                adminPanelTitle: "Admin Paneli", btnLogout: "Çıxış Et", adminAddLogoTitle: "Yeni Loqo Əlavə Et",
-                adminLogoName: "Loqo Adı", adminLogoDesc: "Təsvir", adminLogoPrice: "Qiymət (USD)", adminLogoImage: "Loqo Şəkili", adminBtnAddLogo: "Loqonu Əlavə Et",
-                adminCurrentLogos: "Mövcud Loqolar", adminNoLogo: "Hələ loqo əlavə edilməyib.",
-                logoCardButton: "Ətraflı Bax",
-                btnAddToCart: "Səbətə Əlavə Et",
-                cartTitle: "Səbətim", cartTotal: "Cəmi:", btnCheckout: "WhatsApp ilə Sifarişi Tamamla", cartEmpty: "Səbətiniz boşdur.",
-                addedToCart: "Səbətə Əlavə Edildi!"
+                contactTitle: "Bizimlə Əlaqə", contactCta: "Dərhal dəstək, sifariş və ya xüsusi istəkləriniz üçün bizə birbaşa WhatsApp üzərindən müraciət edin.", btnWhatsApp: "WhatsApp ilə Əlaqə", footerText: "© 2025 MuLogo. Bütün hüquqlar qorunur. | İşıqlandırılmış Loqo Dizaynları.",
+                btnCart: "Səbətim", adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifrə", btnLogin: "Daxil Ol", btnCancel: "Ləğv Et", loginError: "Yanlış Şifrə!",
+                adminPanelTitle: "Admin Paneli", btnLogout: "Çıxış Et", adminAddLogoTitle: "Yeni Loqo Əlavə Et", adminLogoName: "Loqo Adı", adminLogoDesc: "Təsvir", adminLogoPrice: "Qiymət (USD)", adminLogoImage: "Loqo Şəkili", adminBtnAddLogo: "Loqonu Əlavə Et",
+                adminCurrentLogos: "Mövcud Loqolar", adminNoLogo: "Hələ loqo əlavə edilməyib.", logoCardButton: "Ətraflı Bax", btnAddToCart: "Səbətə Əlavə Et", cartTitle: "Səbətim", cartTotal: "Cəmi:", btnCheckout: "WhatsApp ilə Sifarişi Tamamla", cartEmpty: "Səbətiniz boşdur.", addedToCart: "Səbətə Əlavə Edildi!"
             }
         };
 
-        // DOM Elementleri
+        // --- DOM Elementleri ---
         const logoGrid = document.getElementById('logoGrid');
         const mobileMenuButton = document.getElementById('mobileMenuButton');
         const mobileMenu = document.getElementById('mobileMenu');
         const adminLoginLinkMobile = document.getElementById('adminLoginLinkMobile');
-
-        // Admin Modalı
         const adminLoginModal = document.getElementById('adminLoginModal');
         const adminPasswordInput = document.getElementById('adminPassword');
         const loginButton = document.getElementById('loginButton');
         const closeAdminLoginModal = document.getElementById('closeAdminLoginModal');
         const loginError = document.getElementById('loginError');
-
-        // Admin Paneli
         const adminPanel = document.getElementById('adminPanel');
         const logoutButton = document.getElementById('logoutButton');
         const addLogoForm = document.getElementById('addLogoForm');
@@ -423,17 +399,12 @@
         const logoImageInput = document.getElementById('logoImage');
         const imagePreview = document.getElementById('imagePreview');
         const adminLogoList = document.getElementById('adminLogoList');
-
-        // Logo Detay Modalı
         const logoDetailModal = document.getElementById('logoDetailModal');
         const closeDetailModal = document.getElementById('closeDetailModal');
         const detailImage = document.getElementById('detailImage');
         const detailName = document.getElementById('detailName');
         const detailDescription = document.getElementById('detailDescription');
         const addToCartButton = document.getElementById('addToCartButton');
-        let currentSelectedLogo = null; 
-
-        // Sepet Modalı
         const cartButton = document.getElementById('cartButton');
         const cartCount = document.getElementById('cartCount');
         const cartModal = document.getElementById('cartModal');
@@ -445,28 +416,110 @@
         const adminFooterLink = document.getElementById('adminFooterLink');
         const whatsappButton = document.getElementById('whatsappButton');
         
-        // --- Fonksiyonlar ---
+        let currentSelectedLogo = null; 
+
+        // --- Firebase İstemci Fonksiyonları ---
+
+        async function initializeFirebase() {
+            try {
+                // Firebase başlat
+                app = initializeApp(FIREBASE_CONFIG);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                setLogLevel('debug'); // Logları görmek için
+
+                // Anonim olarak oturum aç (Herkesin logolara erişimi için)
+                await signInAnonymously(auth);
+                userId = auth.currentUser?.uid || 'anonymous';
+                console.log("Firebase başlatıldı. Anonim Kullanıcı ID:", userId);
+
+                // Logoları dinlemeye başla
+                listenForLogos();
+
+            } catch (error) {
+                console.error("Firebase başlatılırken veya oturum açılırken hata oluştu:", error);
+            }
+        }
+
+        // Firestore Koleksiyon Referansını Al
+        function getLogosCollectionRef() {
+            // Public data path: /artifacts/{appId}/public/data/logos
+            const appId = FIREBASE_CONFIG.appId;
+            return collection(db, `artifacts/${appId}/public/data/logos`);
+        }
+
+        // Logoları Gerçek Zamanlı Dinle
+        function listenForLogos() {
+            if (!db) return;
+
+            const q = query(getLogosCollectionRef());
+            
+            onSnapshot(q, (snapshot) => {
+                // Firestore belgelerini yerel 'logos' array'ine dönüştür
+                logos = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                
+                // UI'ı güncelle
+                renderLogos(); 
+                renderAdminLogoList();
+                
+            }, (error) => {
+                console.error("Firestore logos dinleme hatası:", error);
+            });
+        }
+
+        // Firestore'a Logo Ekle
+        async function addLogoToFirestore(logoData) {
+            if (!db) return false;
+            try {
+                await addDoc(getLogosCollectionRef(), logoData);
+                console.log("Logo başarıyla Firestore'a eklendi.");
+                return true;
+            } catch (e) {
+                console.error("Logo eklenirken hata: ", e);
+                return false;
+            }
+        }
+
+        // Firestore'dan Logo Sil
+        async function deleteLogoFromFirestore(docId) {
+            if (!db) return;
+            try {
+                const logoDocRef = doc(getLogosCollectionRef(), docId);
+                await deleteDoc(logoDocRef);
+                console.log("Logo başarıyla Firestore'dan silindi.");
+            } catch (e) {
+                console.error("Logo silinirken hata: ", e);
+            }
+        }
+
+
+        // --- UI & Local Storage Fonksiyonları ---
 
         function setLanguage(lang) {
             currentLang = lang;
             localStorage.setItem('mu_lang', lang);
             updateUILanguage();
-            renderLogos(); // Logoları yeniden render et ki buton metinleri değişsin
+            renderLogos();
+            renderAdminLogoList();
         }
 
         function updateUILanguage() {
             const lang = currentLang;
-            // Tüm data-lang-key'li elementleri güncelle
             document.querySelectorAll('[data-lang-key]').forEach(element => {
                 const key = element.getAttribute('data-lang-key');
                 if (translations[lang] && translations[lang][key]) {
-                    // Özel durum: title metni HTML içeriyorsa innerHTML kullan
                     if (key === 'heroTitle') {
                         element.innerHTML = translations[lang][key];
                     } else {
-                        // Placeholders için
-                        if (element.tagName === 'INPUT' && element.hasAttribute('placeholder')) {
-                            element.placeholder = translations[lang][key];
+                        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                            if (element.hasAttribute('placeholder')) {
+                                element.placeholder = translations[lang][key];
+                            } else {
+                                element.textContent = translations[lang][key];
+                            }
                         } else {
                             element.textContent = translations[lang][key];
                         }
@@ -474,20 +527,9 @@
                 }
             });
 
-            // Sepet ve Admin modalındaki placeholder metinlerini manuel güncelle
             adminPasswordInput.placeholder = translations[lang].placeholderPassword;
-            
-            // cartTotal'ı güncellerken Toplam metnini ayarla
             renderCartItems(); 
-
             document.documentElement.lang = lang;
-        }
-
-
-        function saveLogos() {
-            localStorage.setItem('mu_logos', JSON.stringify(logos));
-            renderLogos(); 
-            renderAdminLogoList(); 
         }
 
         function saveCart() {
@@ -510,8 +552,8 @@
                 const logoCard = document.createElement('div');
                 logoCard.className = 'logo-card p-6 rounded-2xl glow-effect cursor-pointer transform hover:scale-105 transition-transform duration-300';
                 logoCard.innerHTML = `
-                    <!-- Anti-Theft: Logo bulanık olarak gösteriliyor -->
-                    <img src="${logo.image}" alt="${logo.name}" class="w-full h-40 object-contain mb-4 rounded-lg bg-gray-900 p-2 border border-gray-700 filter blur-md">
+                    <!-- Ana ekranda hafif bulanık (blur-light-main) -->
+                    <img src="${logo.image}" alt="${logo.name}" class="w-full h-40 object-contain mb-4 rounded-lg bg-gray-900 p-2 border border-gray-700 blur-light-main">
                     <h3 class="text-xl font-semibold mb-2 text-white text-center">${logo.name}</h3>
                     <p class="text-gray-400 mb-4 text-sm text-center line-clamp-2">${logo.description}</p>
                     <div class="flex justify-between items-center mt-4">
@@ -558,25 +600,19 @@
             });
 
             document.querySelectorAll('.delete-logo-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
+                button.addEventListener('click', async (e) => {
                     const logoIdToDelete = e.target.dataset.id;
-                    deleteLogo(logoIdToDelete);
+                    await deleteLogoFromFirestore(logoIdToDelete);
+                    // onSnapshot otomatik olarak güncelleyecektir
                 });
             });
         }
 
-        function deleteLogo(id) {
-            logos = logos.filter(logo => logo.id !== id);
-            saveLogos();
-        }
-
         function showLogoDetail(logo) {
             currentSelectedLogo = logo;
-            // Detay modalında görsel net olmalı
             detailImage.src = logo.image;
             detailName.textContent = logo.name;
             detailDescription.textContent = logo.description;
-            // Fiyat bilgisinin yanına USD ekleniyor
             document.getElementById('detailPrice').textContent = logo.price.toFixed(2);
             logoDetailModal.classList.remove('hidden'); 
         }
@@ -680,14 +716,13 @@
         }
 
         // --- Olay Dinleyicileri ---
-        // Dil seçimi butonları
+        
         document.querySelectorAll('.lang-btn').forEach(button => {
             button.addEventListener('click', () => {
                 setLanguage(button.getAttribute('data-lang'));
             });
         });
 
-        // WhatsApp iletişim butonu
         whatsappButton.addEventListener('click', () => {
              const message = translations[currentLang].contactWhatsAppMessage || "Merhaba, MuLogo'dan sizinle iletişime geçiyorum. Bir logo tasarımı veya özel bir sipariş hakkında bilgi almak istiyorum.";
              const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -695,31 +730,26 @@
         });
 
 
-        // Mobil menü açma/kapama
         mobileMenuButton.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
         });
 
-        // Footer'daki logo yazısına tıklayınca admin girişi aç (Gizli Giriş)
         adminFooterLink.addEventListener('click', (e) => {
             e.preventDefault(); 
             adminLoginModal.classList.remove('hidden'); 
         });
 
-        // Admin Giriş linki (mobil menüde)
         adminLoginLinkMobile.addEventListener('click', () => {
             mobileMenu.classList.add('hidden'); 
             adminLoginModal.classList.remove('hidden'); 
         });
 
-        // Admin Giriş Modalı olayları
         loginButton.addEventListener('click', () => {
             if (adminPasswordInput.value === ADMIN_PASSWORD) {
                 adminLoginModal.classList.add('hidden'); 
                 adminPanel.classList.remove('hidden'); 
                 loginError.classList.add('hidden');
                 adminPasswordInput.value = '';
-                renderAdminLogoList();
             } else {
                 loginError.classList.remove('hidden');
             }
@@ -731,14 +761,11 @@
             adminPasswordInput.value = '';
         });
 
-        // Yönetici Panelinden çıkış yap
         logoutButton.addEventListener('click', () => {
             adminPanel.classList.add('hidden'); 
-            // alert() yerine console.log kullanıldı
             console.log("Admin panelinden çıkış yapıldı.");
         });
 
-        // Resim önizleme
         logoImageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
@@ -754,68 +781,68 @@
             }
         });
 
-        // Logo Ekleme Formu
-        addLogoForm.addEventListener('submit', (e) => {
+        // Logo Ekleme Formu (Firestore'a yazar)
+        addLogoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const file = logoImageInput.files[0];
             if (!file) {
-                // alert() yerine console.error kullanıldı
                 console.error("Lütfen bir logo görseli seçin.");
                 return;
             }
 
             const reader = new FileReader();
-            reader.onload = (event) => {
-                const newLogo = {
-                    id: Date.now().toString(), 
+            reader.onload = async (event) => {
+                const newLogoData = {
                     name: logoNameInput.value,
                     description: logoDescriptionInput.value,
                     price: parseFloat(logoPriceInput.value),
-                    image: event.target.result 
+                    image: event.target.result // Base64 verisi
                 };
-                logos.push(newLogo);
-                saveLogos();
-                addLogoForm.reset(); 
-                imagePreview.classList.add('hidden');
-                console.log("Logo başarıyla eklendi!"); 
+                
+                const success = await addLogoToFirestore(newLogoData);
+                
+                if (success) {
+                    addLogoForm.reset(); 
+                    imagePreview.classList.add('hidden');
+                    console.log("Logo başarıyla eklendi!"); 
+                } else {
+                    console.error("Logo eklenemedi.");
+                }
             };
             reader.readAsDataURL(file);
         });
 
-        // Logo Detay Modalını kapatma
         closeDetailModal.addEventListener('click', () => {
             logoDetailModal.classList.add('hidden'); 
         });
 
-        // Sepete Ekle butonu (detay modalında)
         addToCartButton.addEventListener('click', () => {
             if (currentSelectedLogo) {
                 addToCart(currentSelectedLogo);
             }
         });
 
-        // Sepet butonuna tıklama
         cartButton.addEventListener('click', () => {
             cartModal.classList.remove('hidden'); 
             renderCartItems(); 
         });
 
-        // Sepet Modalını kapatma
         closeCartModal.addEventListener('click', () => {
             cartModal.classList.add('hidden'); 
         });
 
-        // WhatsApp ile Siparişi Tamamla butonu
         checkoutButton.addEventListener('click', generateWhatsAppMessage);
 
 
-        // Sayfa yüklendiğinde logoları, sepeti yükle ve dili ayarla
+        // Sayfa yüklendiğinde başlat
         document.addEventListener('DOMContentLoaded', () => {
             setLanguage(currentLang); 
-            renderLogos();
             updateCartCount();
+            initializeFirebase(); // Firebase'i başlat ve logoları dinle
         });
     </script>
 </body>
 </html>
+
+
