@@ -321,17 +321,14 @@
         const ADMIN_PASSWORD = "1975";
         const WHATSAPP_NUMBER = "994707841414"; 
 
-        // Kullanıcının Sağladığı Firebase Yapılandırması
-        const FIREBASE_CONFIG = {
-            apiKey: "AIzaSyAKJSmx2_1RPVtvnnJT-49Nz8SGUPrvH0c",
-            authDomain: "mulogo-b941c.firebaseapp.com",
-            projectId: "mulogo-b941c",
-            storageBucket: "mulogo-b941c.firebasestorage.app",
-            messagingSenderId: "382222540163",
-            appId: "1:382222540163:web:09a21543065fa0c469eab6" 
-        };
+        // Kullanıcının Sağladığı Firebase Yapılandırması (Canvas Ortamından Gelir)
+        // Global değişkenler tanımlı değilse varsayılan değerler kullanılır.
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // --- Global Firebase & Data Durumları ---
+        // ÖNEMLİ DÜZELTME: Bu değişkenler SADECE bir kez burada bildirilir.
         let app = null;
         let db = null;
         let auth = null;
@@ -420,46 +417,39 @@
         
         let currentSelectedLogo = null; 
 
-        // --- Global Firebase & Data Durumları ---
-        let app = null;
-        let db = null;
-        let auth = null;
-        let userId = null;
-        let logos = []; 
-        let cart = JSON.parse(localStorage.getItem('mu_cart')) || [];
-        let currentLang = localStorage.getItem('mu_lang') || 'tr'; 
-
-
         // --- Firebase İstemci Fonksiyonları ---
 
         async function initializeFirebase() {
             try {
                 // Firebase başlat
-                app = initializeApp(FIREBASE_CONFIG);
-                db = getFirestore(app);
-                auth = getAuth(app);
-                setLogLevel('debug'); // Logları görmek için
+                if (Object.keys(firebaseConfig).length === 0) {
+                     console.error("Firebase yapılandırması eksik. Veritabanı işlemleri yapılamayacak.");
+                } else {
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                    auth = getAuth(app);
+                    setLogLevel('debug'); // Logları görmek için
 
-                // Anonim olarak oturum aç (Herkesin logolara erişimi için)
-                await signInAnonymously(auth);
-                userId = auth.currentUser?.uid || 'anonymous';
-                console.log("Firebase başlatıldı. Anonim Kullanıcı ID:", userId);
+                    // Anonim olarak oturum aç (Herkesin logolara erişimi için)
+                    await signInAnonymously(auth);
+                    userId = auth.currentUser?.uid || 'anonymous';
+                    console.log("Firebase başlatıldı. Anonim Kullanıcı ID:", userId);
 
-                // Logoları dinlemeye başla
-                listenForLogos();
+                    // Logoları dinlemeye başla
+                    listenForLogos();
+                }
 
             } catch (error) {
                 console.error("Firebase başlatılırken veya oturum açılırken kritik hata oluştu:", error);
                 // Başlangıç hatası durumunda kullanıcıya bilgi ver
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin.</p>`;
+                logoGrid.innerHTML = <p class="text-center col-span-full text-red-400">Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin.</p>;
             }
         }
 
         // Firestore Koleksiyon Referansını Al
         function getLogosCollectionRef() {
             // Public data path: /artifacts/{appId}/public/data/logos
-            const appId = FIREBASE_CONFIG.appId;
-            return collection(db, `artifacts/${appId}/public/data/logos`);
+            return collection(db, artifacts/${appId}/public/data/logos);
         }
 
         // Logoları Gerçek Zamanlı Dinle
@@ -481,7 +471,7 @@
                 
             }, (error) => {
                 console.error("Firestore logos dinleme hatası:", error);
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenirken bir hata oluştu.</p>`;
+                logoGrid.innerHTML = <p class="text-center col-span-full text-red-400">Logolar yüklenirken bir hata oluştu.</p>;
             });
         }
 
@@ -577,7 +567,7 @@
             const buttonText = translations[lang].logoCardButton;
 
             if (logos.length === 0) {
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-gray-400">${translations[lang].adminNoLogo}</p>`;
+                logoGrid.innerHTML = <p class="text-center col-span-full text-gray-400">${translations[lang].adminNoLogo}</p>;
                 return;
             }
 
@@ -610,7 +600,7 @@
             const lang = currentLang;
 
             if (logos.length === 0) {
-                adminLogoList.innerHTML = `<li class="text-gray-400">${translations[lang].adminNoLogo}</li>`;
+                adminLogoList.innerHTML = <li class="text-gray-400">${translations[lang].adminNoLogo}</li>;
                 return;
             }
 
@@ -665,7 +655,7 @@
 
             if (cart.length === 0) {
                 emptyCartMessage.classList.remove('hidden');
-                cartTotal.textContent = `${translations[lang].cartTotal} 0.00 USD`;
+                cartTotal.textContent = ${translations[lang].cartTotal} 0.00 USD;
                 checkoutButton.disabled = true;
                 checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
                 return;
@@ -692,7 +682,7 @@
                 cartItemsList.appendChild(listItem);
             });
 
-            cartTotal.textContent = `${translations[lang].cartTotal} ${total.toFixed(2)} USD`;
+            cartTotal.textContent = ${translations[lang].cartTotal} ${total.toFixed(2)} USD;
 
             document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
@@ -732,13 +722,13 @@
             let total = 0;
 
             cart.forEach((item, index) => {
-                message += `${index + 1}. ${item.name} - ${item.price.toFixed(2)} USD\n`;
+                message += ${index + 1}. ${item.name} - ${item.price.toFixed(2)} USD\n;
                 total += item.price;
             });
 
-            message += `\nToplam Tutar: ${total.toFixed(2)} USD\n\nLütfen siparişimi tamamlamak için benimle iletişime geçin.`;
+            message += \nToplam Tutar: ${total.toFixed(2)} USD\n\nLütfen siparişimi tamamlamak için benimle iletişime geçin.;
 
-            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+            const whatsappUrl = https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)};
             window.open(whatsappUrl, '_blank');
             
             cart = [];
@@ -756,7 +746,7 @@
 
         whatsappButton.addEventListener('click', () => {
              const message = "Merhaba, MuLogo'dan sizinle iletişime geçiyorum. Bir logo tasarımı veya özel bir sipariş hakkında bilgi almak istiyorum.";
-             const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+             const whatsappUrl = https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)};
              window.open(whatsappUrl, '_blank');
         });
 
@@ -812,7 +802,7 @@
             }
         });
 
-        // Logo Ekleme Formu (Düzeltildi: addLogoToFirestore çağrısı bekleniyor)
+        // Logo Ekleme Formu
         addLogoForm.addEventListener('submit', async (e) => {
             e.preventDefault();
 
@@ -890,5 +880,3 @@
     </script>
 </body>
 </html>
-
-
