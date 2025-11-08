@@ -314,21 +314,33 @@
     <script type="module">
         // --- Firebase SDK Imports ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, onSnapshot, collection, query, addDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // --- Sabitler ---
         const ADMIN_PASSWORD = "1975";
         const WHATSAPP_NUMBER = "994707841414"; 
 
-        // Kullanıcının Sağladığı Firebase Yapılandırması (Canvas Ortamından Gelir)
-        // Global değişkenler tanımlı değilse varsayılan değerler kullanılır.
+        // KULLANICININ İSTEDİĞİ FIREBASE YAPILANDIRMASI (Geri Dönüş Olarak Kullanılır)
+        const HARDCODED_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyAKJSmx2_1RPVtvnnJT-49Nz8SGUPrvH0c",
+            authDomain: "mulogo-b941c.firebaseapp.com",
+            projectId: "mulogo-b941c",
+            storageBucket: "mulogo-b941c.firebasestorage.app",
+            messagingSenderId: "382222540163",
+            appId: "1:382222540163:web:09a21543065fa0c469eab6"
+        };
+
+        // Canvas Ortamından gelen konfigürasyon (öncelikli) veya hardcoded konfigürasyon
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : HARDCODED_FIREBASE_CONFIG;
+        
+        // App ID'yi Canvas ortamından al, yoksa varsayılanı kullan
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // --- Global Firebase & Data Durumları ---
-        // ÖNEMLİ DÜZELTME: Bu değişkenler SADECE bir kez burada bildirilir.
         let app = null;
         let db = null;
         let auth = null;
@@ -365,13 +377,13 @@
                 adminCurrentLogos: "Current Logos", adminNoLogo: "No logos added yet.", logoCardButton: "View Details", btnAddToCart: "Add to Cart", cartTitle: "My Cart", cartTotal: "Total:", btnCheckout: "Complete Order via WhatsApp", cartEmpty: "Your cart is empty.", addedToCart: "Added to Cart!"
             },
             az: {
-                pageTitle: "MuLogo | Misilsiz Loqo Dizaynları", navHome: "Ana Səhifə", navLogos: "Loqolarımız", navAbout: "Haqqımızda", navContact: "Əlaqə",
+                pageTitle: "MuLogo | Misilsiz Loqo Dizaynları", navHome: "Ana Səhifə", navLogos: "Our Logos", navAbout: "Haqqımızda", navContact: "Əlaqə",
                 heroTitle: 'Brendinizə <span class="text-custom-blue glow-effect">İşıq Qatın</span>', heroSubtitle: "MuLogo-da biz, biznesinizin əsasını əks etdirən, müasir və yadda qalan loqolar dizayn edir və satışa çıxarırıq.",
                 btnExplore: "Kolleksiyaya Bax", loading: "Yüklənir...", galleryTitle: "Misilsiz Loqo Kolleksiyamız", gallerySubtitle: "Hər biri diqqətlə hazırlanmış, dərhal istifadəyə hazır loqolar.",
                 aboutTitle: "Niyə MuLogo?", feature1Title: "Hazır və Sürətli Təhvil", feature1Text: "Aldığınız loqonu dərhal yüksək keyfiyyətli vektor formatlarında (AI, EPS, SVG) təhvil veririk.",
                 feature2Title: "Tam Müəllif Hüququ", feature2Text: "Loqonu aldığınız zaman, ticari istifadə üçün bütün müəllif hüquqları və mülkiyyət sizə keçir.",
                 feature3Title: "Xüsusi Dəstək", feature3Text: "Loqo seçimi, fərdiləşdirmə və ya hər hansı suallarınız üçün xüsusi dəstək təmin edirik.",
-                contactTitle: "Bizimlə Əlaqə", contactCta: "Dərhal dəstək, sifariş və ya xüsusi istəkləriniz üçün bizə birbaşa WhatsApp üzərindən müraciət edin.", btnWhatsApp: "WhatsApp ilə Əlaqə", footerText: "© 2025 MuLogo. Bütün hüquqlar qorunur. | İşıqlandırılmış Loqo Dizaynları.",
+                contactTitle: "Bizimlə Əlaqə", contactCta: "Anında dəstək, sifariş və ya xüsusi istəkləriniz üçün bizə birbaşa WhatsApp üzərindən müraciət edin.", btnWhatsApp: "WhatsApp ilə Əlaqə", footerText: "© 2025 MuLogo. Bütün hüquqlar qorunur. | İşıqlandırılmış Loqo Dizaynları.",
                 btnCart: "Səbətim", adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifrə", btnLogin: "Daxil Ol", btnCancel: "Ləğv Et", loginError: "Yanlış Şifrə!",
                 adminPanelTitle: "Admin Paneli", btnLogout: "Çıxış Et", adminAddLogoTitle: "Yeni Loqo Əlavə Et", adminLogoName: "Loqo Adı", adminLogoDesc: "Təsvir", adminLogoPrice: "Qiymət (USD)", adminLogoImage: "Loqo Şəkili", adminBtnAddLogo: "Loqonu Əlavə Et",
                 adminCurrentLogos: "Mövcud Loqolar", adminNoLogo: "Hələ loqo əlavə edilməyib.", logoCardButton: "Ətraflı Bax", btnAddToCart: "Səbətə Əlavə Et", cartTitle: "Səbətim", cartTotal: "Cəmi:", btnCheckout: "WhatsApp ilə Sifarişi Tamamla", cartEmpty: "Səbətiniz boşdur.", addedToCart: "Səbətə Əlavə Edildi!"
@@ -422,7 +434,7 @@
         async function initializeFirebase() {
             try {
                 // Firebase başlat
-                if (Object.keys(firebaseConfig).length === 0) {
+                if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
                      console.error("Firebase yapılandırması eksik. Veritabanı işlemleri yapılamayacak.");
                 } else {
                     app = initializeApp(firebaseConfig);
@@ -430,10 +442,19 @@
                     auth = getAuth(app);
                     setLogLevel('debug'); // Logları görmek için
 
-                    // Anonim olarak oturum aç (Herkesin logolara erişimi için)
-                    await signInAnonymously(auth);
+                    // Kanonik kimlik doğrulama akışını kullanın.
+                    if (initialAuthToken) {
+                        // Custom Token ile giriş yap (Öncelikli yol)
+                        await signInWithCustomToken(auth, initialAuthToken);
+                        console.log("Custom Token ile oturum açıldı.");
+                    } else {
+                        // Custom Token yoksa anonim olarak giriş yap
+                        await signInAnonymously(auth);
+                        console.log("Anonim olarak oturum açıldı.");
+                    }
+                    
                     userId = auth.currentUser?.uid || 'anonymous';
-                    console.log("Firebase başlatıldı. Anonim Kullanıcı ID:", userId);
+                    console.log("Firebase başlatıldı. Kullanıcı ID:", userId);
 
                     // Logoları dinlemeye başla
                     listenForLogos();
@@ -442,14 +463,14 @@
             } catch (error) {
                 console.error("Firebase başlatılırken veya oturum açılırken kritik hata oluştu:", error);
                 // Başlangıç hatası durumunda kullanıcıya bilgi ver
-                logoGrid.innerHTML = <p class="text-center col-span-full text-red-400">Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin.</p>;
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin.</p>`;
             }
         }
 
         // Firestore Koleksiyon Referansını Al
         function getLogosCollectionRef() {
             // Public data path: /artifacts/{appId}/public/data/logos
-            return collection(db, artifacts/${appId}/public/data/logos);
+            return collection(db, `artifacts/${appId}/public/data/logos`);
         }
 
         // Logoları Gerçek Zamanlı Dinle
@@ -471,7 +492,8 @@
                 
             }, (error) => {
                 console.error("Firestore logos dinleme hatası:", error);
-                logoGrid.innerHTML = <p class="text-center col-span-full text-red-400">Logolar yüklenirken bir hata oluştu.</p>;
+                // Eğer hata izin hatasıysa, kullanıcının bu durumu bilmesi gerekir
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenirken izin hatası oluştu. Lütfen konsolu kontrol edin.</p>`;
             });
         }
 
@@ -482,23 +504,12 @@
                 return false;
             }
             try {
-                // Butonu devre dışı bırak ve metni değiştir (Yükleniyor...)
-                submitLogoButton.disabled = true;
-                submitLogoButton.textContent = translations[currentLang].loading;
-
                 await addDoc(getLogosCollectionRef(), logoData);
                 console.log("Logo başarıyla Firestore'a eklendi.");
-                
-                // Başarılı işlem sonrası butonu eski haline getir
-                submitLogoButton.textContent = translations[currentLang].adminBtnAddLogo;
-                submitLogoButton.disabled = false;
-                
                 return true;
             } catch (e) {
                 console.error("Logo eklenirken hata: ", e);
-                // Hata durumunda butonu eski haline getir
-                submitLogoButton.textContent = translations[currentLang].adminBtnAddLogo;
-                submitLogoButton.disabled = false;
+                // Hata 1MB sınırıyla ilgili olabilir, bu yüzden hata mesajını konsola yazdırın.
                 return false;
             }
         }
@@ -516,6 +527,51 @@
             } catch (e) {
                 console.error("Logo silinirken hata: ", e);
             }
+        }
+
+        // --- Yeni Fonksiyon: Resmi Yeniden Boyutlandır ve Base64'e dönüştür ---
+        function resizeImage(file, maxWidth = 300, maxHeight = 300) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        let width = img.width;
+                        let height = img.height;
+
+                        // En boy oranını koruyarak yeniden boyutlandırma
+                        if (width > height) {
+                            if (width > maxWidth) {
+                                height *= maxWidth / width;
+                                width = maxWidth;
+                            }
+                        } else {
+                            if (height > maxHeight) {
+                                width *= maxHeight / height;
+                                height = maxHeight;
+                            }
+                        }
+                        
+                        // Canvas oluştur
+                        const canvas = document.createElement('canvas');
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Resmi canvas'a çiz
+                        ctx.drawImage(img, 0, 0, width, height);
+
+                        // Yeni Base64 verisini döndür (JPEG'i tercih et ve kaliteyi düşür)
+                        // Kalite 0.7 olarak ayarlandı, bu da boyutun küçülmesini sağlar.
+                        const resizedBase64 = canvas.toDataURL('image/jpeg', 0.7); 
+                        resolve(resizedBase64);
+                    };
+                    img.onerror = reject;
+                    img.src = event.target.result;
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
         }
 
 
@@ -567,7 +623,7 @@
             const buttonText = translations[lang].logoCardButton;
 
             if (logos.length === 0) {
-                logoGrid.innerHTML = <p class="text-center col-span-full text-gray-400">${translations[lang].adminNoLogo}</p>;
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-gray-400">${translations[lang].adminNoLogo}</p>`;
                 return;
             }
 
@@ -600,7 +656,7 @@
             const lang = currentLang;
 
             if (logos.length === 0) {
-                adminLogoList.innerHTML = <li class="text-gray-400">${translations[lang].adminNoLogo}</li>;
+                adminLogoList.innerHTML = `<li class="text-gray-400">${translations[lang].adminNoLogo}</li>`;
                 return;
             }
 
@@ -655,7 +711,7 @@
 
             if (cart.length === 0) {
                 emptyCartMessage.classList.remove('hidden');
-                cartTotal.textContent = ${translations[lang].cartTotal} 0.00 USD;
+                cartTotal.textContent = `${translations[lang].cartTotal} 0.00 USD`;
                 checkoutButton.disabled = true;
                 checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
                 return;
@@ -682,7 +738,7 @@
                 cartItemsList.appendChild(listItem);
             });
 
-            cartTotal.textContent = ${translations[lang].cartTotal} ${total.toFixed(2)} USD;
+            cartTotal.textContent = `${translations[lang].cartTotal} ${total.toFixed(2)} USD`;
 
             document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
                 button.addEventListener('click', (e) => {
@@ -722,13 +778,13 @@
             let total = 0;
 
             cart.forEach((item, index) => {
-                message += ${index + 1}. ${item.name} - ${item.price.toFixed(2)} USD\n;
+                message += `${index + 1}. ${item.name} - ${item.price.toFixed(2)} USD\n`;
                 total += item.price;
             });
 
-            message += \nToplam Tutar: ${total.toFixed(2)} USD\n\nLütfen siparişimi tamamlamak için benimle iletişime geçin.;
+            message += `\nToplam Tutar: ${total.toFixed(2)} USD\n\nLütfen siparişimi tamamlamak için benimle iletişime geçin.`;
 
-            const whatsappUrl = https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)};
+            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
             
             cart = [];
@@ -746,7 +802,7 @@
 
         whatsappButton.addEventListener('click', () => {
              const message = "Merhaba, MuLogo'dan sizinle iletişime geçiyorum. Bir logo tasarımı veya özel bir sipariş hakkında bilgi almak istiyorum.";
-             const whatsappUrl = https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)};
+             const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
              window.open(whatsappUrl, '_blank');
         });
 
@@ -790,6 +846,7 @@
         logoImageInput.addEventListener('change', (event) => {
             const file = event.target.files[0];
             if (file) {
+                // Önizleme için dosya okuyucu kullan
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     imagePreview.src = e.target.result;
@@ -822,13 +879,20 @@
                  return;
             }
 
-            const reader = new FileReader();
-            reader.onload = async (event) => {
+            // Buton durumunu ayarla (Yükleniyor...)
+            submitLogoButton.disabled = true;
+            submitLogoButton.textContent = translations[currentLang].loading;
+
+            try {
+                // Resmi yeniden boyutlandır ve Base64'e dönüştür (1MB limitini aşmamak için)
+                // Maksimum 300x300 piksel ve %70 JPEG kalitesi kullanıldı.
+                const resizedBase64Image = await resizeImage(file, 300, 300);
+                
                 const newLogoData = {
                     name: logoNameInput.value.trim(),
                     description: logoDescriptionInput.value.trim(),
                     price: parseFloat(logoPriceInput.value),
-                    image: event.target.result // Base64 verisi
+                    image: resizedBase64Image // Küçültülmüş Base64 verisi
                 };
                 
                 const success = await addLogoToFirestore(newLogoData);
@@ -837,15 +901,14 @@
                     addLogoForm.reset(); 
                     imagePreview.classList.add('hidden');
                     console.log("Logo başarıyla eklendi!"); 
-                } else {
-                    console.error("Logo eklenemedi. Detaylar için konsolu kontrol edin.");
                 }
-            };
-            
-            try {
-                reader.readAsDataURL(file);
+                
             } catch (error) {
-                 console.error("Dosya okuma hatası:", error);
+                console.error("Resim işleme veya ekleme hatası: ", error);
+            } finally {
+                // Hata olsa da olmasa da butonu eski haline getir
+                submitLogoButton.textContent = translations[currentLang].adminBtnAddLogo;
+                submitLogoButton.disabled = false;
             }
         });
 
