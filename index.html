@@ -312,81 +312,50 @@
 
     
     <script type="module">
-       // --- Firebase SDK Imports ---
-import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { 
-  getAuth, 
-  signInAnonymously, 
-  signInWithCustomToken, 
-  onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-import { 
-  getFirestore, 
-  doc, 
-  onSnapshot, 
-  collection, 
-  query, 
-  addDoc, 
-  deleteDoc, 
-  setLogLevel 
-} from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // --- Firebase SDK Imports (SADECE BURADA OLMALIDIR) ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, collection, query, addDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-// --- Sabitler ---
-const ADMIN_PASSWORD = "1975";
-const WHATSAPP_NUMBER = "994707841414";
+        // --- Sabitler ---
+        const ADMIN_PASSWORD = "1975";
+        const WHATSAPP_NUMBER = "994707841414"; 
 
-// --- Firebase Yapılandırması ---
-const firebaseConfig = {
-  apiKey: "AIzaSyAKJSmx2_1RPVtvnnJT-49Nz8SGUPrvH0c",
-  authDomain: "mulogo-b941c.firebaseapp.com",
-  projectId: "mulogo-b941c",
-  storageBucket: "mulogo-b941c.firebasestorage.app",
-  messagingSenderId: "382222540163",
-  appId: "1:382222540163:web:09a21543065fa0c469eab6"
-};
+        // KULLANICININ İSTEDİĞİ FIREBASE YAPILANDIRMASI (Global değişken yoksa yedek olarak kullanılır)
+        const HARDCODED_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyAKJSmx2_1RPVtvnnJT-49Nz8SGUPrvH0c",
+            authDomain: "mulogo-b941c.firebaseapp.com",
+            projectId: "mulogo-b941c",
+            storageBucket: "mulogo-b941c.firebasestorage.app",
+            messagingSenderId: "382222540163",
+            appId: "1:382222540163:web:09a21543065fa0c469eab6"
+        };
 
-// --- Firebase'i Başlat ---
-let app, db, auth, userId;
-try {
-  app = initializeApp(firebaseConfig);
-  db = getFirestore(app);
-  auth = getAuth(app);
-  setLogLevel('debug');
-  console.log("✅ Firebase başarıyla başlatıldı");
-} catch (err) {
-  console.error("❌ Firebase başlatılırken hata:", err);
-}
+        // Canvas Ortamından gelen konfigürasyon (öncelikli) veya hardcoded konfigürasyon
+        const firebaseConfig = typeof __firebase_config !== 'undefined' 
+            ? JSON.parse(__firebase_config) 
+            : HARDCODED_FIREBASE_CONFIG;
+        
+        // App ID'yi Canvas ortamından al, yoksa varsayılanı kullan
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
-// --- Global Durumlar ---
-let logos = [];
-let cart = JSON.parse(localStorage.getItem('mu_cart')) || [];
-let currentLang = localStorage.getItem('mu_lang') || 'tr';
+        // --- Global Firebase & Data Durumları ---
+        let firebaseApp = null; // Çakışmayı önlemek için 'app' yerine 'firebaseApp' kullanıldı
+        let db = null;
+        let auth = null;
+        let userId = null;
+        let logos = []; 
+        let cart = JSON.parse(localStorage.getItem('mu_cart')) || [];
+        let currentLang = localStorage.getItem('mu_lang') || 'tr'; 
 
-// --- Kullanıcı Durumu Dinle ---
-if (auth) {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      userId = user.uid;
-      console.log("Kullanıcı giriş yaptı:", user.uid);
-    } else {
-      userId = null;
-      console.log("Kullanıcı çıkış yaptı veya anonim giriş bekleniyor.");
-      // Eğer hiç giriş yapılmadıysa anonim giriş yap
-      signInAnonymously(auth)
-        .then(() => console.log("Anonim kullanıcı olarak giriş yapıldı."))
-        .catch(err => console.error("Anonim giriş hatası:", err));
-    }
-  });
-} else {
-  console.error("Firebase Auth başlatılamadı!");
-}
 
         // --- Düzeltilmiş ve Doğru Çeviriler (Tüm Metinleri İçerir) ---
         const translations = {
             tr: {
                 pageTitle: "MuLogo | Eşsiz Logo Tasarımları", navHome: "Anasayfa", navLogos: "Logolarımız", navAbout: "Hakkımızda", navContact: "İletişim",
                 heroTitle: 'Markanıza <span class="text-custom-blue glow-effect">Işık Katın</span>', heroSubtitle: "MuLogo'da, işinizin özünü yansıtan, modern ve akılda kalıcı logolar tasarlıyor ve satışa sunuyoruz.",
-                btnExplore: "Koleksiyonu Keşfet", loading: "Yükleniyor...", galleryTitle: "Eşsiz Logo Koleksiyonumuz", gallerySubtitle: "Her biri özenle tasarlanmış, hemen kullanıma hazır logolar.",
+                btnExplore: "Koleksiyonu Keşfet", loading: "Logolar Yükleniyor...", galleryTitle: "Eşsiz Logo Koleksiyonumuz", gallerySubtitle: "Her biri özenle tasarlanmış, hemen kullanıma hazır logolar.",
                 aboutTitle: "Neden MuLogo?", feature1Title: "Hazır ve Hızlı Teslimat", feature1Text: "Satın aldığınız logoyu anında yüksek çözünürlüklü ve vektörel formatlarda (AI, EPS, SVG) teslim ediyoruz.",
                 feature2Title: "Tam Telif Hakkı", feature2Text: "Logoyu satın aldığınızda, ticari kullanıma yönelik tüm telif hakları ve sahiplik size geçer.",
                 feature3Title: "Özel Destek", feature3Text: "Logo seçimi, özelleştirme veya herhangi bir sorunuz için özel destek sağlıyoruz.",
@@ -398,7 +367,7 @@ if (auth) {
             en: {
                 pageTitle: "MuLogo | Unique Logo Designs", navHome: "Home", navLogos: "Our Logos", navAbout: "About Us", navContact: "Contact",
                 heroTitle: 'Illuminate Your <span class="text-custom-blue glow-effect">Brand</span>', heroSubtitle: "At MuLogo, we design and sell modern, memorable, ready-to-use logos that capture the essence of your business.",
-                btnExplore: "Explore Collection", loading: "Loading...", galleryTitle: "Our Exclusive Logo Collection", gallerySubtitle: "Ready-to-use logos, each carefully crafted by experts.",
+                btnExplore: "Explore Collection", loading: "Loading Logos...", galleryTitle: "Our Exclusive Logo Collection", gallerySubtitle: "Ready-to-use logos, each carefully crafted by experts.",
                 aboutTitle: "Why Choose MuLogo?", feature1Title: "Instant and Fast Delivery", feature1Text: "Get your purchased logo instantly in high-resolution vector formats (AI, EPS, SVG).",
                 feature2Title: "Full Copyright Ownership", feature2Text: "Upon purchase, all commercial copyrights and ownership are fully transferred to you.",
                 feature3Title: "Dedicated Support", feature3Text: "We provide dedicated support for logo selection, customization, and any questions you may have.",
@@ -410,7 +379,7 @@ if (auth) {
             az: {
                 pageTitle: "MuLogo | Misilsiz Loqo Dizaynları", navHome: "Ana Səhifə", navLogos: "Our Logos", navAbout: "Haqqımızda", navContact: "Əlaqə",
                 heroTitle: 'Brendinizə <span class="text-custom-blue glow-effect">İşıq Qatın</span>', heroSubtitle: "MuLogo-da biz, biznesinizin əsasını əks etdirən, müasir və yadda qalan loqolar dizayn edir və satışa çıxarırıq.",
-                btnExplore: "Kolleksiyaya Bax", loading: "Yüklənir...", galleryTitle: "Misilsiz Loqo Kolleksiyamız", gallerySubtitle: "Hər biri diqqətlə hazırlanmış, dərhal istifadəyə hazır loqolar.",
+                btnExplore: "Kolleksiyaya Bax", loading: "Loqolar Yüklənir...", galleryTitle: "Misilsiz Loqo Kolleksiyamız", gallerySubtitle: "Hər biri diqqətlə hazırlanmış, dərhal istifadəyə hazır loqolar.",
                 aboutTitle: "Niyə MuLogo?", feature1Title: "Hazır və Sürətli Təhvil", feature1Text: "Aldığınız loqonu dərhal yüksək keyfiyyətli vektor formatlarında (AI, EPS, SVG) təhvil veririk.",
                 feature2Title: "Tam Müəllif Hüququ", feature2Text: "Loqonu aldığınız zaman, ticari istifadə üçün bütün müəllif hüquqları və mülkiyyət sizə keçir.",
                 feature3Title: "Xüsusi Dəstək", feature3Text: "Loqo seçimi, fərdiləşdirmə və ya hər hansı suallarınız üçün xüsusi dəstək təmin edirik.",
@@ -464,37 +433,44 @@ if (auth) {
 
         async function initializeFirebase() {
             try {
-                // Firebase başlat
+                // Firebase yapılandırmasının varlığını kontrol et
                 if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
-                     console.error("Firebase yapılandırması eksik. Veritabanı işlemleri yapılamayacak.");
-                } else {
-                    app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-                    setLogLevel('debug'); // Logları görmek için
-
-                    // Kanonik kimlik doğrulama akışını kullanın.
-                    if (initialAuthToken) {
-                        // Custom Token ile giriş yap (Öncelikli yol)
-                        await signInWithCustomToken(auth, initialAuthToken);
-                        console.log("Custom Token ile oturum açıldı.");
-                    } else {
-                        // Custom Token yoksa anonim olarak giriş yap
-                        await signInAnonymously(auth);
-                        console.log("Anonim olarak oturum açıldı.");
-                    }
-                    
-                    userId = auth.currentUser?.uid || 'anonymous';
-                    console.log("Firebase başlatıldı. Kullanıcı ID:", userId);
-
-                    // Logoları dinlemeye başla
-                    listenForLogos();
+                     console.error("Firebase yapılandırması eksik. Veritabanı işlemleri yapılamayacak. Lütfen __firebase_config değişkenini kontrol edin.");
+                     // Yapılandırma yoksa, hata mesajını göster ve çık
+                     logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">${translations[currentLang].loading.replace('...', 'başarısız')} (Yapılandırma Hatası)</p>`;
+                     return;
                 }
+                
+                // 1. Firebase Servislerini Başlat
+                firebaseApp = initializeApp(firebaseConfig);
+                db = getFirestore(firebaseApp);
+                auth = getAuth(firebaseApp);
+                setLogLevel('debug'); // Debug seviyesini aç
+
+                // 2. Kimlik Doğrulama
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                    console.log("Custom Token ile oturum açıldı.");
+                } else {
+                    await signInAnonymously(auth);
+                    console.log("Anonim olarak oturum açıldı.");
+                }
+                
+                // 3. Kullanıcı ID'sini Al
+                userId = auth.currentUser?.uid || 'anonymous';
+                console.log("Firebase başlatıldı. Kullanıcı ID:", userId);
+
+                // 4. Logoları dinlemeye başla
+                listenForLogos();
 
             } catch (error) {
-                console.error("Firebase başlatılırken veya oturum açılırken kritik hata oluştu:", error);
-                // Başlangıç hatası durumunda kullanıcıya bilgi ver
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin.</p>`;
+                // HATA YAKALAMA VE KONSOLE GERÇEK HATAYI YAZDIRMA (DEBUG AMAÇLI GÜNCELLEME)
+                console.error("Firebase başlatılırken veya oturum açılırken KRİTİK HATA oluştu:", error);
+                
+                // Hata durumunda kullanıcıya bilgi ver ve grid'i temizle
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400" data-lang-key="dbConnectionError">
+                    Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin. (Hata Kodu: ${error.code || 'Bilinmiyor'})
+                </p>`;
             }
         }
 
@@ -524,7 +500,7 @@ if (auth) {
             }, (error) => {
                 console.error("Firestore logos dinleme hatası:", error);
                 // Eğer hata izin hatasıysa, kullanıcının bu durumu bilmesi gerekir
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenirken izin hatası oluştu. Lütfen konsolu kontrol edin.</p>`;
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenirken hata oluştu. Lütfen konsolu kontrol edin. (İzin Hatası olabilir)</p>`;
             });
         }
 
@@ -540,7 +516,6 @@ if (auth) {
                 return true;
             } catch (e) {
                 console.error("Logo eklenirken hata: ", e);
-                // Hata 1MB sınırıyla ilgili olabilir, bu yüzden hata mesajını konsola yazdırın.
                 return false;
             }
         }
@@ -579,7 +554,7 @@ if (auth) {
                         } else {
                             if (height > maxHeight) {
                                 width *= maxHeight / height;
-                                height = maxHeight;
+                                width = maxHeight;
                             }
                         }
                         
@@ -813,7 +788,7 @@ if (auth) {
                 total += item.price;
             });
 
-            message += `\nToplam Tutar: ${total.toFixed(2)} USD\n\nLütfen siparişimi tamamlamak için benimle iletişime geçin.`;
+            message += `\nToplam Tutar: ${total.toFixed(2)} USD\n\nLütfen siparişimimi tamamlamak için benimle iletişime geçin.`;
 
             const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
