@@ -321,7 +321,7 @@
         const ADMIN_PASSWORD = "1975";
         const WHATSAPP_NUMBER = "994707841414"; 
 
-        // KULLANICININ İSTEDİĞİ FIREBASE YAPILANDIRMASI (Global değişken yoksa yedek olarak kullanılır)
+        // KULLANICININ İSTEDİĞİ FIREBASE YAPILANDIRMASI (AuthDomain hatası için kontrol amaçlı tutuldu)
         const HARDCODED_FIREBASE_CONFIG = {
             apiKey: "AIzaSyAKJSmx2_1RPVtvnnJT-49Nz8SGUPrvH0c",
             authDomain: "mulogo-b941c.firebaseapp.com",
@@ -341,7 +341,7 @@
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
 
         // --- Global Firebase & Data Durumları ---
-        let firebaseApp = null; // Çakışmayı önlemek için 'app' yerine 'firebaseApp' kullanıldı
+        let firebaseApp = null; 
         let db = null;
         let auth = null;
         let userId = null;
@@ -433,21 +433,23 @@
 
         async function initializeFirebase() {
             try {
-                // Firebase yapılandırmasının varlığını kontrol et
-                if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.apiKey) {
-                     console.error("Firebase yapılandırması eksik. Veritabanı işlemleri yapılamayacak. Lütfen __firebase_config değişkenini kontrol edin.");
-                     // Yapılandırma yoksa, hata mesajını göster ve çık
-                     logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">${translations[currentLang].loading.replace('...', 'başarısız')} (Yapılandırma Hatası)</p>`;
+                
+                // 1. Firebase Yapılandırma Kontrolü
+                if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+                     console.error("KRİTİK: Firebase Auth için gerekli yapılandırma (apiKey, authDomain, projectId) eksik veya hatalı. Lütfen Canvas ortamınızdaki __firebase_config değişkenini kontrol edin.");
+                     logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">
+                         Veritabanı bağlantısı kurulamadı. (Hata: Auth Yapılandırması Eksik)
+                     </p>`;
                      return;
                 }
                 
-                // 1. Firebase Servislerini Başlat
+                // 2. Firebase Servislerini Başlat
                 firebaseApp = initializeApp(firebaseConfig);
                 db = getFirestore(firebaseApp);
                 auth = getAuth(firebaseApp);
                 setLogLevel('debug'); // Debug seviyesini aç
 
-                // 2. Kimlik Doğrulama
+                // 3. Kimlik Doğrulama
                 if (initialAuthToken) {
                     await signInWithCustomToken(auth, initialAuthToken);
                     console.log("Custom Token ile oturum açıldı.");
@@ -456,20 +458,20 @@
                     console.log("Anonim olarak oturum açıldı.");
                 }
                 
-                // 3. Kullanıcı ID'sini Al
+                // 4. Kullanıcı ID'sini Al
                 userId = auth.currentUser?.uid || 'anonymous';
                 console.log("Firebase başlatıldı. Kullanıcı ID:", userId);
 
-                // 4. Logoları dinlemeye başla
+                // 5. Logoları dinlemeye başla
                 listenForLogos();
 
             } catch (error) {
-                // HATA YAKALAMA VE KONSOLE GERÇEK HATAYI YAZDIRMA (DEBUG AMAÇLI GÜNCELLEME)
+                // HATA YAKALAMA VE KONSOLE GERÇEK HATAYI YAZDIRMA 
                 console.error("Firebase başlatılırken veya oturum açılırken KRİTİK HATA oluştu:", error);
                 
-                // Hata durumunda kullanıcıya bilgi ver ve grid'i temizle
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400" data-lang-key="dbConnectionError">
-                    Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin. (Hata Kodu: ${error.code || 'Bilinmiyor'})
+                // Hata durumunda kullanıcıya bilgi ver
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">
+                    Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin. 
                 </p>`;
             }
         }
@@ -500,7 +502,7 @@
             }, (error) => {
                 console.error("Firestore logos dinleme hatası:", error);
                 // Eğer hata izin hatasıysa, kullanıcının bu durumu bilmesi gerekir
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenirken hata oluştu. Lütfen konsolu kontrol edin. (İzin Hatası olabilir)</p>`;
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenirken hata oluştu. Lütfen konsolu kontrol edin.</p>`;
             });
         }
 
