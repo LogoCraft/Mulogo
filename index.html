@@ -145,6 +145,8 @@
                 
                 <p class="text-center col-span-full text-gray-400" data-lang-key="loading">Logolar Yükleniyor...</p>
             </div>
+            
+            <p id="configErrorDisplay" class="text-center col-span-full text-red-400 mt-8 hidden"></p>
         </div>
     </section>
 
@@ -321,8 +323,10 @@
         const ADMIN_PASSWORD = "1975";
         const WHATSAPP_NUMBER = "994707841414"; 
 
-        // KULLANICININ İSTEDİĞİ FIREBASE YAPILANDIRMASI (AuthDomain hatası için kontrol amaçlı tutuldu)
-        const HARDCODED_FIREBASE_CONFIG = {
+        // KRİTİK: Firebase Auth'un doğru yapılandırmayı almasını sağlamak için
+        // Hardcoded değerler, __firebase_config'un eksik veya hatalı geldiği durumlar için bir yedektir.
+        // authDomain alanı bu hata için en kritik alandır.
+        const FALLBACK_FIREBASE_CONFIG = {
             apiKey: "AIzaSyAKJSmx2_1RPVtvnnJT-49Nz8SGUPrvH0c",
             authDomain: "mulogo-b941c.firebaseapp.com",
             projectId: "mulogo-b941c",
@@ -331,11 +335,24 @@
             appId: "1:382222540163:web:09a21543065fa0c469eab6"
         };
 
-        // Canvas Ortamından gelen konfigürasyon (öncelikli) veya hardcoded konfigürasyon
-        const firebaseConfig = typeof __firebase_config !== 'undefined' 
-            ? JSON.parse(__firebase_config) 
-            : HARDCODED_FIREBASE_CONFIG;
-        
+        // Canvas Ortamından gelen konfigürasyon (öncelikli) veya yedek konfigürasyon
+        let firebaseConfig;
+        try {
+            firebaseConfig = typeof __firebase_config !== 'undefined' 
+                ? JSON.parse(__firebase_config) 
+                : FALLBACK_FIREBASE_CONFIG;
+            
+            // Son bir kontrol: Eğer config var ama authDomain yoksa, yedekleyiciden çek
+            if (!firebaseConfig.authDomain) {
+                 console.warn("UYARI: Sağlanan Firebase konfigürasyonunda 'authDomain' eksik. Yedek konfigürasyondan çekiliyor.");
+                 firebaseConfig = FALLBACK_FIREBASE_CONFIG;
+            }
+
+        } catch (e) {
+            console.error("KRİTİK HATA: __firebase_config ayrıştırılamadı. Yedek konfigürasyondan çekiliyor.", e);
+            firebaseConfig = FALLBACK_FIREBASE_CONFIG;
+        }
+
         // App ID'yi Canvas ortamından al, yoksa varsayılanı kullan
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
@@ -348,6 +365,8 @@
         let logos = []; 
         let cart = JSON.parse(localStorage.getItem('mu_cart')) || [];
         let currentLang = localStorage.getItem('mu_lang') || 'tr'; 
+        
+        const configErrorDisplay = document.getElementById('configErrorDisplay');
 
 
         // --- Düzeltilmiş ve Doğru Çeviriler (Tüm Metinleri İçerir) ---
@@ -434,22 +453,22 @@
         async function initializeFirebase() {
             try {
                 
-                // 1. Firebase Yapılandırma Kontrolü
+                // KRİTİK KONTROL
                 if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
-                     console.error("KRİTİK: Firebase Auth için gerekli yapılandırma (apiKey, authDomain, projectId) eksik veya hatalı. Lütfen Canvas ortamınızdaki __firebase_config değişkenini kontrol edin.");
-                     logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">
-                         Veritabanı bağlantısı kurulamadı. (Hata: Auth Yapılandırması Eksik)
-                     </p>`;
+                     const errorMsg = "KRİTİK HATA: Firebase Auth için gerekli yapılandırma (API Key, Auth Domain, Project ID) eksik. Uygulama başlatılamıyor.";
+                     console.error(errorMsg);
+                     configErrorDisplay.textContent = errorMsg;
+                     configErrorDisplay.classList.remove('hidden');
                      return;
                 }
                 
-                // 2. Firebase Servislerini Başlat
+                // 1. Firebase Servislerini Başlat
                 firebaseApp = initializeApp(firebaseConfig);
                 db = getFirestore(firebaseApp);
                 auth = getAuth(firebaseApp);
                 setLogLevel('debug'); // Debug seviyesini aç
 
-                // 3. Kimlik Doğrulama
+                // 2. Kimlik Doğrulama
                 if (initialAuthToken) {
                     await signInWithCustomToken(auth, initialAuthToken);
                     console.log("Custom Token ile oturum açıldı.");
@@ -458,11 +477,14 @@
                     console.log("Anonim olarak oturum açıldı.");
                 }
                 
-                // 4. Kullanıcı ID'sini Al
+                // 3. Kullanıcı ID'sini Al
                 userId = auth.currentUser?.uid || 'anonymous';
                 console.log("Firebase başlatıldı. Kullanıcı ID:", userId);
+                
+                // Hata mesajını temizle
+                configErrorDisplay.classList.add('hidden');
 
-                // 5. Logoları dinlemeye başla
+                // 4. Logoları dinlemeye başla
                 listenForLogos();
 
             } catch (error) {
@@ -470,9 +492,9 @@
                 console.error("Firebase başlatılırken veya oturum açılırken KRİTİK HATA oluştu:", error);
                 
                 // Hata durumunda kullanıcıya bilgi ver
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">
-                    Veritabanı bağlantısı kurulamadı. Lütfen konsolu kontrol edin. 
-                </p>`;
+                configErrorDisplay.textContent = `Veritabanı bağlantısı kurulamadı. Hata Kodu: ${error.code || error.message}. Lütfen konsolu kontrol edin.`;
+                configErrorDisplay.classList.remove('hidden');
+                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenemiyor. Hata kodu yukarıda belirtilmiştir.</p>`;
             }
         }
 
@@ -631,7 +653,10 @@
             const buttonText = translations[lang].logoCardButton;
 
             if (logos.length === 0) {
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-gray-400">${translations[lang].adminNoLogo}</p>`;
+                // Yalnızca yapılandırma hatası yoksa "Henüz logo eklenmedi" mesajını göster
+                if (configErrorDisplay.classList.contains('hidden')) {
+                    logoGrid.innerHTML = `<p class="text-center col-span-full text-gray-400">${translations[lang].adminNoLogo}</p>`;
+                }
                 return;
             }
 
