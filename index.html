@@ -1,978 +1,235 @@
-<!DOCTYPE html>
-<html lang="tr">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title data-lang-key="pageTitle">MuLogo | Eşsiz Logo Tasarımları</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0d0d0d;
+        .accordion-button { 
+            background-color: #121212 !important;
+            color: white !important;
         }
-        /* Canlı Mavi Tonlar */
-        .text-custom-blue { color: #60a5fa; } 
-        .bg-custom-blue { background-color: #3b82f6; } 
-        .hover\:bg-custom-blue-dark:hover { background-color: #2563eb; }
-
-        /* Aydınlatma Efekti */
-        .glow-effect {
-            box-shadow: 0 0 20px rgba(96, 165, 250, 0.7), 0 0 40px rgba(96, 165, 250, 0.4);
-            transition: all 0.4s ease-in-out;
+        .accordion-button::after {
+            background-color: white !important;
         }
-        .glow-effect:hover {
-            box-shadow: 0 0 30px rgba(96, 165, 250, 0.9), 0 0 60px rgba(96, 165, 250, 0.6);
-            transform: translateY(-2px);
+        ul li {
+            font-size: 13px;
+            line-height: 30px;
         }
-        .logo-card {
-            background-color: rgba(17, 24, 39, 0.7);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(96, 165, 250, 0.3);
-        }
-        
-        /* Bulanıklık Optimizasyonu */
-        /* Ana ekranda logo: Hafif bulanık (görülür ama SS alınamaz) */
-        .blur-light-main { filter: blur(2px); }
-        /* Detay modalında logo: Çok az bulanık (neredeyse net) */
-        .blur-very-light-detail { filter: blur(1px); }
-
-        .logo-card:hover .blur-light-main {
-            filter: blur(1px); /* Hover'da daha net görünmesi için ekstra iyileştirme */
-        }
-
-        /* WhatsApp İkonu */
-        .whatsapp-icon { fill: white; transition: transform 0.3s ease; }
-        .whatsapp-button:hover .whatsapp-icon { transform: rotate(10deg) scale(1.05); }
-
-        @keyframes blob {
-            0% { transform: translate(0px, 0px) scale(1); }
-            33% { transform: translate(30px, -50px) scale(1.1); }
-            66% { transform: translate(-20px, 20px) scale(0.9); }
-            100% { transform: translate(0px, 0px) scale(1); }
-        }
-        .animate-blob { animation: blob 7s infinite; }
-        .animation-delay-2000 { animation-delay: 2s; }
-        .animation-delay-4000 { animation-delay: 4s; }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 min-h-screen flex flex-col">
+  <body style="background-color: #121212;" class="text-white">
 
-    <!-- Ana Sayfa Menüsü (Header) -->
-    <header class="bg-black/70 shadow-lg sticky top-0 z-20 backdrop-blur-sm border-b border-custom-blue/30">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center py-4">
-            
-            <a href="#" class="text-4xl font-extrabold tracking-tight text-custom-blue">
-                <span class="p-1 rounded-lg glow-effect">MuLogo</span>
+    <nav class="navbar navbar-expand-lg bg-black text-white px-5">
+        <div class="container-md">
+          <a class="navbar-brand text-white fw-bold" href="#">
+            <i class="bi bi-spotify"></i>
+            Spotify
             </a>
-            
-            <nav class="space-x-8 hidden md:flex">
-                <a href="#tanitim" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navHome">Anasayfa</a>
-                <a href="#galeri" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navLogos">Logolarımız</a>
-                <a href="#hakkimizda" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navAbout">Hakkımızda</a>
-                <a href="#iletisim" class="text-gray-300 hover:text-custom-blue transition duration-300" data-lang-key="navContact">İletişim</a>
-            </nav>
+          <div>
+            <a class="navbar-brand text-white fw-bold" href="#">Premium</a>
+            <a class="navbar-brand text-white fw-bold" href="#">Destek</a>
+            <a class="navbar-brand text-white fw-bold" href="#">Indir</a>
+          </div>
 
-            <!-- Dil Seçici ve Sepet -->
-            <div class="flex items-center space-x-3">
-                <div id="languageSelector" class="flex space-x-2">
-                    <button class="lang-btn" data-lang="tr" title="Türkçe">
-                        <img src="https://flagcdn.com/w20/tr.png" srcset="https://flagcdn.com/w40/tr.png 2x" width="20" alt="Türkçe" class="rounded shadow-md ring-2 ring-custom-blue/50">
-                    </button>
-                    <button class="lang-btn" data-lang="az" title="Azerbaycanca">
-                        <img src="https://flagcdn.com/w20/az.png" srcset="https://flagcdn.com/w40/az.png 2x" width="20" alt="Azerbaycanca" class="rounded shadow-md ring-2 ring-custom-blue/50">
-                    </button>
-                    <button class="lang-btn" data-lang="en" title="English">
-                        <img src="https://flagcdn.com/w20/us.png" srcset="https://flagcdn.com/w40/us.png 2x" width="20" alt="English" class="rounded shadow-md ring-2 ring-custom-blue/50">
-                    </button>
-                </div>
-                
-                <button id="cartButton" class="relative p-2 bg-gray-700 text-custom-blue rounded-lg hover:bg-gray-600 transition duration-300" data-lang-key="btnCart" title="Sepetim">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 0a2 2 0 100 4 2 2 0 000-4z"></path></svg>
-                    <span id="cartCount" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
-                </button>
+        </div>
+    </nav>
 
-                <button id="mobileMenuButton" class="md:hidden p-2 bg-gray-700 text-custom-blue rounded-lg hover:bg-gray-600 transition duration-300">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                </button>
-            </div>
-        </div>
-        
-        <div id="mobileMenu" class="md:hidden hidden bg-black/90 pb-4">
-            <nav class="flex flex-col items-center space-y-4 py-4">
-                <a href="#tanitim" class="text-gray-300 hover:text-custom-blue transition duration-300 text-lg" data-lang-key="navHome">Anasayfa</a>
-                <a href="#galeri" class="text-gray-300 hover:text-custom-blue transition duration-300 text-lg" data-lang-key="navLogos">Logolarımız</a>
-                <a href="#hakkimizda" class="text-gray-300 hover:text-custom-blue transition duration-300 text-lg" data-lang-key="navAbout">Hakkımızda</a>
-                <a href="#iletisim" class="text-gray-300 hover:text-custom-blue transition duration-300 text-lg" data-lang-key="navContact">İletişim</a>
-                <button id="adminLoginLinkMobile" class="text-gray-500 hover:text-custom-blue text-sm mt-4" data-lang-key="adminLogin">Admin Girişi</button>
-            </nav>
-        </div>
-    </header>
-
-    <!-- Tanıtım Bölümü -->
-    <section id="tanitim" class="py-20 md:py-32 text-center bg-gradient-to-br from-gray-900 to-black relative overflow-hidden">
-        <div class="absolute inset-0 z-0 opacity-10">
-            <div class="absolute top-1/4 left-1/4 w-72 h-72 bg-custom-blue rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-            <div class="absolute top-1/2 right-1/4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-            <div class="absolute bottom-1/4 left-1/2 w-72 h-72 bg-sky-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
-        </div>
-        <div class="container mx-auto px-4 relative z-10">
-            
-            <h1 class="text-5xl sm:text-7xl font-extrabold mb-4 leading-tight text-white drop-shadow-lg" data-lang-key="heroTitle">
-                Markanıza <span class="text-custom-blue glow-effect">Işık Katın</span>
+    <!-- hero section -->
+    <section class="container-md py-5">
+        <img class="position-absolute z-n1 end-0 top-0 w-50" src="https://wwwmarketing.scdn.co/static/images/premium/desktop-album-evergreen-1x.png">
+        <div class="w-50">
+            <h1 class="fw-bold">
+                Sınırsız dinle. Hesabını Premium Bireysel planına yükselttiğinde 1 ay ücretsiz
             </h1>
-            
-            <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto drop-shadow-md" data-lang-key="heroSubtitle">
-                MuLogo'da, işinizin özünü yansıtan, modern ve akılda kalıcı logolar tasarlıyor ve satışa sunuyoruz.
-            </p>
-            
-            <a href="#galeri" class="inline-block px-10 py-4 bg-custom-blue text-white text-lg font-bold rounded-xl shadow-xl hover:bg-custom-blue-dark transition duration-300 transform hover:scale-105 glow-effect" data-lang-key="btnExplore">
-                Koleksiyonu Keşfet
-            </a>
+            <h2 class="fs-6 fw-lighter">
+                Sonra yalnızca ₺59,99/ay. İstediğin zaman iptal et.
+            </h2>            
         </div>
-    </section>
 
-    <!-- Logo Galeri Bölümü -->
-    <section id="galeri" class="py-16 md:py-24 bg-gradient-to-b from-black to-gray-900 flex-grow">
-        <div class="container mx-auto px-4">
-            <h2 class="text-4xl font-bold text-center mb-12 text-custom-blue drop-shadow-lg" data-lang-key="galleryTitle">Eşsiz Logo Koleksiyonumuz</h2>
-            <p class="text-center text-gray-300 mb-16" data-lang-key="gallerySubtitle">Her biri özenle tasarlanmış, hemen kullanıma hazır logolar.</p>
-
-            
-            <div id="logoGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                
-                <p class="text-center col-span-full text-gray-400" data-lang-key="loading">Logolar Yükleniyor...</p>
-            </div>
-            
-            <p id="configErrorDisplay" class="text-center col-span-full text-red-400 mt-8 hidden"></p>
-        </div>
-    </section>
-
-    <!-- Hakkımızda Bölümü -->
-    <section id="hakkimizda" class="py-16 md:py-24 bg-gray-900 border-t border-b border-custom-blue/20">
-        <div class="container mx-auto px-4 max-w-4xl">
-            <h2 class="text-4xl font-bold text-center mb-12 text-custom-blue drop-shadow-lg" data-lang-key="aboutTitle">Neden MuLogo?</h2>
-            <div class="space-y-8 text-gray-300">
-                
-                <div class="flex items-start space-x-4 bg-gray-800/50 p-6 rounded-xl border border-custom-blue/30 glow-effect">
-                    <div class="text-custom-blue text-2xl mt-1">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.182a12.001 12.001 0 014.182 5.618m-4.182-5.618l-5.618 5.618m5.618-5.618L10 10m-4.182 5.618l-5.618-5.618m4.182 5.618L9 12m-4.182-5.618a12.001 12.001 0 014.182-5.618m-4.182 5.618L4 10m-4.182-5.618a12.001 12.001 0 014.182-5.618"></path></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold text-white" data-lang-key="feature1Title">Hazır ve Hızlı Teslimat</h3>
-                        <p class="mt-1" data-lang-key="feature1Text">Satın aldığınız logoyu anında yüksek çözünürlüklü ve vektörel formatlarda (AI, EPS, SVG) teslim ediyoruz.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start space-x-4 bg-gray-800/50 p-6 rounded-xl border border-custom-blue/30 glow-effect">
-                    <div class="text-custom-blue text-2xl mt-1">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8h12a2 2 0 002-2v-4a2 2 0 00-2-2H6a2 2 0 00-2 2v4a2 2 0 002 2z"></path></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold text-white" data-lang-key="feature2Title">Tam Telif Hakkı</h3>
-                        <p class="mt-1" data-lang-key="feature2Text">Logoyu satın aldığınızda, ticari kullanıma yönelik tüm telif hakları ve sahiplik size geçer.</p>
-                    </div>
-                </div>
-
-                <div class="flex items-start space-x-4 bg-gray-800/50 p-6 rounded-xl border border-custom-blue/30 glow-effect">
-                    <div class="text-custom-blue text-2xl mt-1">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.05 16H3.05a2 2 0 01-2-2V8a2 2 0 012-2h8.05M11.05 16L16 12 11.05 8m0 8h-4"></path></svg>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-semibold text-white" data-lang-key="feature3Title">Özel Destek</h3>
-                        <p class="mt-1" data-lang-key="feature3Text">Logo seçimi, özelleştirme veya herhangi bir sorunuz için özel destek sağlıyoruz.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- İletişim Bölümü (WhatsApp Butonu) -->
-    <section id="iletisim" class="py-16 md:py-24 bg-gradient-to-t from-black to-gray-900">
-        <div class="container mx-auto px-4 max-w-2xl">
-            <h2 class="text-4xl font-bold text-center mb-12 text-custom-blue drop-shadow-lg" data-lang-key="contactTitle">Bize Ulaşın</h2>
-            <div class="bg-gray-800/70 p-8 sm:p-10 rounded-xl border border-custom-blue/50 glow-effect text-center">
-                <p class="text-lg text-gray-300 mb-6" data-lang-key="contactCta">Anında destek, sipariş veya özel istekleriniz için bize hemen WhatsApp üzerinden ulaşın.</p>
-                <button id="whatsappButton" 
-                        class="whatsapp-button w-full sm:w-auto inline-flex items-center justify-center px-10 py-4 bg-green-600 text-white text-xl font-bold rounded-xl shadow-2xl hover:bg-green-700 transition duration-300 transform hover:scale-[1.03] glow-effect focus:outline-none focus:ring-4 focus:ring-green-500/50">
-                    <svg class="whatsapp-icon w-8 h-8 mr-3" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.039 1.834c-5.184 0-9.405 4.221-9.405 9.405 0 1.62.41 3.149 1.168 4.498L1.5 22.5l5.592-1.472a9.385 9.385 0 0 0 5.447 1.638c5.184 0 9.405-4.221 9.405-9.405 0-5.184-4.221-9.405-9.405-9.405zm4.72 13.923s-.292.585-.877.679c-.585.094-1.393-.289-2.316-.679-.923-.389-2.175-.767-3.41-1.282-1.236-.514-2.274-1.383-3.08-2.385-.807-1.002-1.328-2.26-.062-3.52.26-.26.47-.354.717-.354.246 0 .54.008.825.008.286 0 .614-.078.932.747.318.825.908 2.21 1.05 2.502.143.292.23.36.438.36.208 0 1.13-.377 2.062-1.144.932-.767 1.492-1.742 1.492-1.742s.318-.468.396-.585c.078-.117.47-.117.755-.078.286.039 1.879.877 2.158 1.056.279.179.438.358.462.614.023.256.023.468.023.824-.001 2.456-1.554 3.197-1.944 3.444z" clip-rule="evenodd" fill-rule="evenodd"/>
-                    </svg>
-                    <span data-lang-key="btnWhatsApp">WhatsApp ile İletişim</span>
-                </button>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-gray-900 border-t border-custom-blue/50 py-8">
-        <div class="container mx-auto px-4 text-center">
-            <div class="text-3xl font-extrabold tracking-tight text-custom-blue mb-4 cursor-pointer" id="adminFooterLink">MuLogo</div>
-            <p class="text-gray-500 text-sm" data-lang-key="footerText">© 2025 MuLogo. Tüm hakları saklıdır. | Aydınlatılmış Logo Tasarımları.</p>
-        </div>
-    </footer>
-
-    <!-- Admin Giriş Modalı (Başlangıçta Gizli) -->
-    <div id="adminLoginModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-sm border border-custom-blue/50 glow-effect">
-            <h3 class="text-2xl font-bold mb-6 text-center text-custom-blue" data-lang-key="adminLoginTitle">Admin Girişi</h3>
-            <input type="password" id="adminPassword" data-lang-key="placeholderPassword" placeholder="Şifre" 
-                   class="w-full px-4 py-3 mb-4 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white placeholder-gray-500">
-            <button id="loginButton" 
-                    class="w-full px-4 py-3 bg-custom-blue text-white font-bold rounded-lg hover:bg-custom-blue-dark transition duration-300 glow-effect" data-lang-key="btnLogin">
-                Giriş Yap
+        <div class="d-flex  mt-5">
+            <button class=" rounded-pill btn btn-danger">
+                Kullanmaya Basla
             </button>
-            <button id="closeAdminLoginModal" class="mt-4 w-full text-gray-400 hover:text-white transition duration-300" data-lang-key="btnCancel">İptal</button>
-            <p id="loginError" class="text-red-500 text-center mt-3 hidden" data-lang-key="loginError">Yanlış şifre!</p>
-        </div>
-    </div>
-
-    <!-- Admin Paneli (Başlangıçta Gizli) -->
-    <div id="adminPanel" class="hidden fixed inset-0 bg-gray-900 z-50 flex flex-col p-6 overflow-y-auto">
-        <div class="container mx-auto">
-            <h2 class="text-4xl font-bold mb-8 text-custom-blue text-center drop-shadow-lg" data-lang-key="adminPanelTitle">Admin Paneli</h2>
-            <button id="logoutButton" class="absolute top-6 right-6 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300" data-lang-key="btnLogout">Çıkış Yap</button>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
-                
-                <div class="bg-gray-800/70 p-8 rounded-xl border border-custom-blue/50 glow-effect h-fit">
-                    <h3 class="text-2xl font-semibold mb-6 text-custom-blue" data-lang-key="adminAddLogoTitle">Yeni Logo Ekle</h3>
-                    <form id="addLogoForm" class="space-y-4">
-                        <div>
-                            <label for="logoName" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="adminLogoName">Logo Adı</label>
-                            <input type="text" id="logoName" required 
-                                   class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white">
-                        </div>
-                        <div>
-                            <label for="logoDescription" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="adminLogoDesc">Açıklama</label>
-                            <textarea id="logoDescription" rows="3" required 
-                                      class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white"></textarea>
-                        </div>
-                        <div>
-                            <label for="logoPrice" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="adminLogoPrice">Fiyat (USD)</label>
-                            <input type="number" id="logoPrice" step="0.01" required 
-                                   class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white">
-                        </div>
-                        <div>
-                            <label for="logoImage" class="block text-sm font-medium text-gray-300 mb-2" data-lang-key="adminLogoImage">Logo Görseli</label>
-                            <input type="file" id="logoImage" accept="image/*" required 
-                                   class="w-full px-4 py-3 bg-gray-900 border border-gray-700 rounded-lg focus:border-custom-blue focus:ring-1 focus:ring-custom-blue text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-custom-blue file:text-white hover:file:bg-custom-blue-dark">
-                            <img id="imagePreview" src="#" alt="Görsel Önizleme" class="mt-4 rounded-lg hidden max-h-40 object-contain mx-auto border border-gray-700">
-                        </div>
-                        <button type="submit" id="submitLogoButton"
-                                class="w-full px-4 py-3 bg-custom-blue text-white font-bold rounded-lg hover:bg-custom-blue-dark transition duration-300 glow-effect" data-lang-key="adminBtnAddLogo">
-                            Logoyu Ekle
-                        </button>
-                    </form>
-                </div>
-
-                
-                <div class="bg-gray-800/70 p-8 rounded-xl border border-custom-blue/50 glow-effect">
-                    <h3 class="text-2xl font-semibold mb-6 text-custom-blue" data-lang-key="adminCurrentLogos">Mevcut Logolar</h3>
-                    <ul id="adminLogoList" class="space-y-4">
-                        
-                        <li class="text-gray-400" data-lang-key="adminNoLogo">Logolar Yükleniyor...</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Logo Detay Modalı (Başlangıçta Gizli) -->
-    <div id="logoDetailModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-2xl border border-custom-blue/50 relative">
-            <button id="closeDetailModal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">&times;</button>
-            <!-- Detay modalında görsel çok az bulanık -->
-            <img id="detailImage" src="#" alt="Logo Detay" class="w-full h-64 object-contain mb-6 rounded-lg bg-gray-900 p-2 border border-gray-700 blur-very-light-detail">
-            <h3 id="detailName" class="text-3xl font-bold mb-2 text-custom-blue"></h3>
-            <p id="detailDescription" class="text-gray-300 mb-4"></p>
-            <p class="text-xl font-bold text-custom-blue mb-6"><span id="detailPrice"></span> USD</p>
-            <button id="addToCartButton" class="w-full px-6 py-3 bg-custom-blue text-white font-bold rounded-lg hover:bg-custom-blue-dark transition duration-300 glow-effect" data-lang-key="btnAddToCart">
-                Sepete Ekle
+            <button class=" rounded-pill btn btn-secondary ms-2">
+                Planlari Goruntule
             </button>
         </div>
-    </div>
 
-    <!-- Sepet Modalı (Başlangıçta Gizli) -->
-    <div id="cartModal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
-        <div class="bg-gray-800 p-8 rounded-lg shadow-xl w-full max-w-md border border-custom-blue/50 relative">
-            <button id="closeCartModal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-xl">&times;</button>
-            <h3 class="text-2xl font-bold mb-6 text-custom-blue text-center" data-lang-key="cartTitle">Sepetim</h3>
-            <ul id="cartItems" class="space-y-4 mb-6 max-h-64 overflow-y-auto pr-2">
-                
-            </ul>
-            <p id="cartTotal" class="text-xl font-bold text-white text-right mb-6" data-lang-key="cartTotal">Toplam: 0.00 USD</p>
-            <button id="checkoutButton" class="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition duration-300 glow-effect" data-lang-key="btnCheckout">
-                WhatsApp ile Siparişi Tamamla
-            </button>
-            <p id="emptyCartMessage" class="text-gray-400 text-center mt-4 hidden" data-lang-key="cartEmpty">Sepetiniz boş.</p>
+        <div class="w-50 mt-3">
+            <p class="fw-lighter w-50" style="font-size: 8px;">İlk 1 ay boyunca ücretsiz, sonra ayda ₺59,99. Sadece Premium'u daha önce denememiş kişiler tekliften yararlanabilir. Koşullar geçerlidir.</p>
         </div>
-    </div>
 
+    </section>
 
+    <!-- Table section -->
+    <section class="container py-5 mt-3">
+        <div class="text-center">
+            <h3 class="fw-bold">Farkı keşfet</h3>
+            <p class="fw-small">Premium'a geç ve dinleyeceğine yalnızca sen karar ver. İstediğin zaman iptal et.</p>
+        </div>
+        <div class="mt-5">
+            <table class="table table-dark">
+                <thead>
+                  <tr>
+                    <th scope="col">Elde edeceğin avantajlar</th>
+                    <th scope="col">Spotify'ın
+                        Free planı</th>
+                    <th scope="col">            <i class="bi bi-spotify"></i>
+                        Premium</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Reklamsız müzik dinle</td>
+                    <td>--</td>
+                    <td><i class="bi bi-check-circle-fill"></i></td>
+                  </tr>
+                  <tr>
+                    <td>İndir ve çevrimdışı dinle</td>
+                    <td>--</td>
+                    <td><i class="bi bi-check-circle-fill"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Şarkıları istediğin sırada çal</td>
+                    <td>--</td>
+                    <td><i class="bi bi-check-circle-fill"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Arkadaşlarınla aynı anda dinle</td>
+                    <td>--</td>
+                    <td><i class="bi bi-check-circle-fill"></i></td>
+                  </tr>
+                  <tr>
+                    <td>Yüksek ses kalitesi</td>
+                    <td>--</td>
+                    <td><i class="bi bi-check-circle-fill"></i></td>
+                  </tr>
+                </tbody>
+              </table>
+        </div>
+    </section>
     
-    <script type="module">
-        // --- Firebase SDK Imports (SADECE BURADA OLMALIDIR) ---
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, onSnapshot, collection, query, addDoc, deleteDoc, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // --- Sabitler ---
-        const ADMIN_PASSWORD = "1975";
-        const WHATSAPP_NUMBER = "994707841414"; 
-
-        // KRİTİK: Firebase Auth'un doğru yapılandırmayı almasını sağlamak için
-        // Hardcoded değerler, __firebase_config'un eksik veya hatalı geldiği durumlar için bir yedektir.
-        // authDomain alanı bu hata için en kritik alandır.
-        const FALLBACK_FIREBASE_CONFIG = {
-            apiKey: "AIzaSyAKJSmx2_1RPVtvnnJT-49Nz8SGUPrvH0c",
-            authDomain: "mulogo-b941c.firebaseapp.com",
-            projectId: "mulogo-b941c",
-            storageBucket: "mulogo-b941c.firebasestorage.app",
-            messagingSenderId: "382222540163",
-            appId: "1:382222540163:web:09a21543065fa0c469eab6"
-        };
-
-        // Canvas Ortamından gelen konfigürasyon (öncelikli) veya yedek konfigürasyon
-        let firebaseConfig;
-        try {
-            firebaseConfig = typeof __firebase_config !== 'undefined' 
-                ? JSON.parse(__firebase_config) 
-                : FALLBACK_FIREBASE_CONFIG;
-            
-            // Son bir kontrol: Eğer config var ama authDomain yoksa, yedekleyiciden çek
-            if (!firebaseConfig.authDomain) {
-                 console.warn("UYARI: Sağlanan Firebase konfigürasyonunda 'authDomain' eksik. Yedek konfigürasyondan çekiliyor.");
-                 firebaseConfig = FALLBACK_FIREBASE_CONFIG;
-            }
-
-        } catch (e) {
-            console.error("KRİTİK HATA: __firebase_config ayrıştırılamadı. Yedek konfigürasyondan çekiliyor.", e);
-            firebaseConfig = FALLBACK_FIREBASE_CONFIG;
-        }
-
-        // App ID'yi Canvas ortamından al, yoksa varsayılanı kullan
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // --- Global Firebase & Data Durumları ---
-        let firebaseApp = null; 
-        let db = null;
-        let auth = null;
-        let userId = null;
-        let logos = []; 
-        let cart = JSON.parse(localStorage.getItem('mu_cart')) || [];
-        let currentLang = localStorage.getItem('mu_lang') || 'tr'; 
-        
-        const configErrorDisplay = document.getElementById('configErrorDisplay');
-
-
-        // --- Düzeltilmiş ve Doğru Çeviriler (Tüm Metinleri İçerir) ---
-        const translations = {
-            tr: {
-                pageTitle: "MuLogo | Eşsiz Logo Tasarımları", navHome: "Anasayfa", navLogos: "Logolarımız", navAbout: "Hakkımızda", navContact: "İletişim",
-                heroTitle: 'Markanıza <span class="text-custom-blue glow-effect">Işık Katın</span>', heroSubtitle: "MuLogo'da, işinizin özünü yansıtan, modern ve akılda kalıcı logolar tasarlıyor ve satışa sunuyoruz.",
-                btnExplore: "Koleksiyonu Keşfet", loading: "Logolar Yükleniyor...", galleryTitle: "Eşsiz Logo Koleksiyonumuz", gallerySubtitle: "Her biri özenle tasarlanmış, hemen kullanıma hazır logolar.",
-                aboutTitle: "Neden MuLogo?", feature1Title: "Hazır ve Hızlı Teslimat", feature1Text: "Satın aldığınız logoyu anında yüksek çözünürlüklü ve vektörel formatlarda (AI, EPS, SVG) teslim ediyoruz.",
-                feature2Title: "Tam Telif Hakkı", feature2Text: "Logoyu satın aldığınızda, ticari kullanıma yönelik tüm telif hakları ve sahiplik size geçer.",
-                feature3Title: "Özel Destek", feature3Text: "Logo seçimi, özelleştirme veya herhangi bir sorunuz için özel destek sağlıyoruz.",
-                contactTitle: "Bize Ulaşın", contactCta: "Anında destek, sipariş veya özel istekleriniz için bize hemen WhatsApp üzerinden ulaşın.", btnWhatsApp: "WhatsApp ile İletişim", footerText: "© 2025 MuLogo. Tüm hakları saklıdır. | Aydınlatılmış Logo Tasarımları.",
-                btnCart: "Sepetim", adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifre", btnLogin: "Giriş Yap", btnCancel: "İptal", loginError: "Yanlış şifre!",
-                adminPanelTitle: "Admin Paneli", btnLogout: "Çıkış Yap", adminAddLogoTitle: "Yeni Logo Ekle", adminLogoName: "Logo Adı", adminLogoDesc: "Açıklama", adminLogoPrice: "Fiyat (USD)", adminLogoImage: "Logo Görseli", adminBtnAddLogo: "Logoyu Ekle",
-                adminCurrentLogos: "Mevcut Logolar", adminNoLogo: "Henüz logo eklenmedi.", logoCardButton: "Detayları İncele", btnAddToCart: "Sepete Ekle", cartTitle: "Sepetim", cartTotal: "Toplam:", btnCheckout: "WhatsApp ile Siparişi Tamamla", cartEmpty: "Sepetiniz boş.", addedToCart: "Sepete Eklendi!"
-            },
-            en: {
-                pageTitle: "MuLogo | Unique Logo Designs", navHome: "Home", navLogos: "Our Logos", navAbout: "About Us", navContact: "Contact",
-                heroTitle: 'Illuminate Your <span class="text-custom-blue glow-effect">Brand</span>', heroSubtitle: "At MuLogo, we design and sell modern, memorable, ready-to-use logos that capture the essence of your business.",
-                btnExplore: "Explore Collection", loading: "Loading Logos...", galleryTitle: "Our Exclusive Logo Collection", gallerySubtitle: "Ready-to-use logos, each carefully crafted by experts.",
-                aboutTitle: "Why Choose MuLogo?", feature1Title: "Instant and Fast Delivery", feature1Text: "Get your purchased logo instantly in high-resolution vector formats (AI, EPS, SVG).",
-                feature2Title: "Full Copyright Ownership", feature2Text: "Upon purchase, all commercial copyrights and ownership are fully transferred to you.",
-                feature3Title: "Dedicated Support", feature3Text: "We provide dedicated support for logo selection, customization, and any questions you may have.",
-                contactTitle: "Get in Touch", contactCta: "For immediate support, orders, or custom requests, reach out to us directly via WhatsApp.", btnWhatsApp: "Contact via WhatsApp", footerText: "© 2025 MuLogo. All rights reserved. | Illuminated Logo Designs.",
-                btnCart: "My Cart", adminLogin: "Admin Login", adminLoginTitle: "Admin Login", placeholderPassword: "Password", btnLogin: "Login", btnCancel: "Cancel", loginError: "Incorrect Password!",
-                adminPanelTitle: "Admin Panel", btnLogout: "Logout", adminAddLogoTitle: "Add New Logo", adminLogoName: "Logo Name", adminLogoDesc: "Description", adminLogoPrice: "Price (USD)", adminLogoImage: "Logo Image", adminBtnAddLogo: "Add Logo",
-                adminCurrentLogos: "Current Logos", adminNoLogo: "No logos added yet.", logoCardButton: "View Details", btnAddToCart: "Add to Cart", cartTitle: "My Cart", cartTotal: "Total:", btnCheckout: "Complete Order via WhatsApp", cartEmpty: "Your cart is empty.", addedToCart: "Added to Cart!"
-            },
-            az: {
-                pageTitle: "MuLogo | Misilsiz Loqo Dizaynları", navHome: "Ana Səhifə", navLogos: "Our Logos", navAbout: "Haqqımızda", navContact: "Əlaqə",
-                heroTitle: 'Brendinizə <span class="text-custom-blue glow-effect">İşıq Qatın</span>', heroSubtitle: "MuLogo-da biz, biznesinizin əsasını əks etdirən, müasir və yadda qalan loqolar dizayn edir və satışa çıxarırıq.",
-                btnExplore: "Kolleksiyaya Bax", loading: "Loqolar Yüklənir...", galleryTitle: "Misilsiz Loqo Kolleksiyamız", gallerySubtitle: "Hər biri diqqətlə hazırlanmış, dərhal istifadəyə hazır loqolar.",
-                aboutTitle: "Niyə MuLogo?", feature1Title: "Hazır və Sürətli Təhvil", feature1Text: "Aldığınız loqonu dərhal yüksək keyfiyyətli vektor formatlarında (AI, EPS, SVG) təhvil veririk.",
-                feature2Title: "Tam Müəllif Hüququ", feature2Text: "Loqonu aldığınız zaman, ticari istifadə üçün bütün müəllif hüquqları və mülkiyyət sizə keçir.",
-                feature3Title: "Xüsusi Dəstək", feature3Text: "Loqo seçimi, fərdiləşdirmə və ya hər hansı suallarınız üçün xüsusi dəstək təmin edirik.",
-                contactTitle: "Bizimlə Əlaqə", contactCta: "Anında dəstək, sifariş və ya xüsusi istəkləriniz üçün bizə birbaşa WhatsApp üzərindən müraciət edin.", btnWhatsApp: "WhatsApp ilə Əlaqə", footerText: "© 2025 MuLogo. Bütün hüquqlar qorunur. | İşıqlandırılmış Loqo Dizaynları.",
-                btnCart: "Səbətim", adminLogin: "Admin Girişi", adminLoginTitle: "Admin Girişi", placeholderPassword: "Şifrə", btnLogin: "Daxil Ol", btnCancel: "Ləğv Et", loginError: "Yanlış Şifrə!",
-                adminPanelTitle: "Admin Paneli", btnLogout: "Çıxış Et", adminAddLogoTitle: "Yeni Loqo Əlavə Et", adminLogoName: "Loqo Adı", adminLogoDesc: "Təsvir", adminLogoPrice: "Qiymət (USD)", adminLogoImage: "Loqo Şəkili", adminBtnAddLogo: "Loqonu Əlavə Et",
-                adminCurrentLogos: "Mövcud Loqolar", adminNoLogo: "Hələ loqo əlavə edilməyib.", logoCardButton: "Ətraflı Bax", btnAddToCart: "Səbətə Əlavə Et", cartTitle: "Səbətim", cartTotal: "Cəmi:", btnCheckout: "WhatsApp ilə Sifarişi Tamamla", cartEmpty: "Səbətiniz boşdur.", addedToCart: "Səbətə Əlavə Edildi!"
-            }
-        };
-
-        // --- DOM Elementleri ---
-        const logoGrid = document.getElementById('logoGrid');
-        const mobileMenuButton = document.getElementById('mobileMenuButton');
-        const mobileMenu = document.getElementById('mobileMenu');
-        const adminLoginLinkMobile = document.getElementById('adminLoginLinkMobile');
-        const adminLoginModal = document.getElementById('adminLoginModal');
-        const adminPasswordInput = document.getElementById('adminPassword');
-        const loginButton = document.getElementById('loginButton');
-        const closeAdminLoginModal = document.getElementById('closeAdminLoginModal');
-        const loginError = document.getElementById('loginError');
-        const adminPanel = document.getElementById('adminPanel');
-        const logoutButton = document.getElementById('logoutButton');
-        const addLogoForm = document.getElementById('addLogoForm');
-        const logoNameInput = document.getElementById('logoName');
-        const logoDescriptionInput = document.getElementById('logoDescription');
-        const logoPriceInput = document.getElementById('logoPrice');
-        const logoImageInput = document.getElementById('logoImage');
-        const imagePreview = document.getElementById('imagePreview');
-        const adminLogoList = document.getElementById('adminLogoList');
-        const logoDetailModal = document.getElementById('logoDetailModal');
-        const closeDetailModal = document.getElementById('closeDetailModal');
-        const detailImage = document.getElementById('detailImage');
-        const detailName = document.getElementById('detailName');
-        const detailDescription = document.getElementById('detailDescription');
-        const addToCartButton = document.getElementById('addToCartButton');
-        const cartButton = document.getElementById('cartButton');
-        const cartCount = document.getElementById('cartCount');
-        const cartModal = document.getElementById('cartModal');
-        const closeCartModal = document.getElementById('closeCartModal');
-        const cartItemsList = document.getElementById('cartItems');
-        const cartTotal = document.getElementById('cartTotal');
-        const checkoutButton = document.getElementById('checkoutButton');
-        const emptyCartMessage = document.getElementById('emptyCartMessage');
-        const adminFooterLink = document.getElementById('adminFooterLink');
-        const whatsappButton = document.getElementById('whatsappButton');
-        const submitLogoButton = document.getElementById('submitLogoButton');
-        
-        let currentSelectedLogo = null; 
-
-        // --- Firebase İstemci Fonksiyonları ---
-
-        async function initializeFirebase() {
-            try {
-                
-                // KRİTİK KONTROL
-                if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
-                     const errorMsg = "KRİTİK HATA: Firebase Auth için gerekli yapılandırma (API Key, Auth Domain, Project ID) eksik. Uygulama başlatılamıyor.";
-                     console.error(errorMsg);
-                     configErrorDisplay.textContent = errorMsg;
-                     configErrorDisplay.classList.remove('hidden');
-                     return;
-                }
-                
-                // 1. Firebase Servislerini Başlat
-                firebaseApp = initializeApp(firebaseConfig);
-                db = getFirestore(firebaseApp);
-                auth = getAuth(firebaseApp);
-                setLogLevel('debug'); // Debug seviyesini aç
-
-                // 2. Kimlik Doğrulama
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                    console.log("Custom Token ile oturum açıldı.");
-                } else {
-                    await signInAnonymously(auth);
-                    console.log("Anonim olarak oturum açıldı.");
-                }
-                
-                // 3. Kullanıcı ID'sini Al
-                userId = auth.currentUser?.uid || 'anonymous';
-                console.log("Firebase başlatıldı. Kullanıcı ID:", userId);
-                
-                // Hata mesajını temizle
-                configErrorDisplay.classList.add('hidden');
-
-                // 4. Logoları dinlemeye başla
-                listenForLogos();
-
-            } catch (error) {
-                // HATA YAKALAMA VE KONSOLE GERÇEK HATAYI YAZDIRMA 
-                console.error("Firebase başlatılırken veya oturum açılırken KRİTİK HATA oluştu:", error);
-                
-                // Hata durumunda kullanıcıya bilgi ver
-                configErrorDisplay.textContent = `Veritabanı bağlantısı kurulamadı. Hata Kodu: ${error.code || error.message}. Lütfen konsolu kontrol edin.`;
-                configErrorDisplay.classList.remove('hidden');
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenemiyor. Hata kodu yukarıda belirtilmiştir.</p>`;
-            }
-        }
-
-        // Firestore Koleksiyon Referansını Al
-        function getLogosCollectionRef() {
-            // Public data path: /artifacts/{appId}/public/data/logos
-            return collection(db, `artifacts/${appId}/public/data/logos`);
-        }
-
-        // Logoları Gerçek Zamanlı Dinle
-        function listenForLogos() {
-            if (!db) return;
-
-            const q = query(getLogosCollectionRef());
-            
-            onSnapshot(q, (snapshot) => {
-                // Firestore belgelerini yerel 'logos' array'ine dönüştür
-                logos = snapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                
-                // UI'ı güncelle
-                renderLogos(); 
-                renderAdminLogoList();
-                
-            }, (error) => {
-                console.error("Firestore logos dinleme hatası:", error);
-                // Eğer hata izin hatasıysa, kullanıcının bu durumu bilmesi gerekir
-                logoGrid.innerHTML = `<p class="text-center col-span-full text-red-400">Logolar yüklenirken hata oluştu. Lütfen konsolu kontrol edin.</p>`;
-            });
-        }
-
-        // Firestore'a Logo Ekle
-        async function addLogoToFirestore(logoData) {
-            if (!db) {
-                console.error("Veritabanı bağlantısı henüz hazır değil.");
-                return false;
-            }
-            try {
-                await addDoc(getLogosCollectionRef(), logoData);
-                console.log("Logo başarıyla Firestore'a eklendi.");
-                return true;
-            } catch (e) {
-                console.error("Logo eklenirken hata: ", e);
-                return false;
-            }
-        }
-
-        // Firestore'dan Logo Sil
-        async function deleteLogoFromFirestore(docId) {
-            if (!db) {
-                console.error("Veritabanı bağlantısı henüz hazır değil.");
-                return;
-            }
-            try {
-                const logoDocRef = doc(getLogosCollectionRef(), docId);
-                await deleteDoc(logoDocRef);
-                console.log("Logo başarıyla Firestore'dan silindi.");
-            } catch (e) {
-                console.error("Logo silinirken hata: ", e);
-            }
-        }
-
-        // --- Yeni Fonksiyon: Resmi Yeniden Boyutlandır ve Base64'e dönüştür ---
-        function resizeImage(file, maxWidth = 300, maxHeight = 300) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = (event) => {
-                    const img = new Image();
-                    img.onload = () => {
-                        let width = img.width;
-                        let height = img.height;
-
-                        // En boy oranını koruyarak yeniden boyutlandırma
-                        if (width > height) {
-                            if (width > maxWidth) {
-                                height *= maxWidth / width;
-                                width = maxWidth;
-                            }
-                        } else {
-                            if (height > maxHeight) {
-                                width *= maxHeight / height;
-                                width = maxHeight;
-                            }
-                        }
-                        
-                        // Canvas oluştur
-                        const canvas = document.createElement('canvas');
-                        canvas.width = width;
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        
-                        // Resmi canvas'a çiz
-                        ctx.drawImage(img, 0, 0, width, height);
-
-                        // Yeni Base64 verisini döndür (JPEG'i tercih et ve kaliteyi düşür)
-                        // Kalite 0.7 olarak ayarlandı, bu da boyutun küçülmesini sağlar.
-                        const resizedBase64 = canvas.toDataURL('image/jpeg', 0.7); 
-                        resolve(resizedBase64);
-                    };
-                    img.onerror = reject;
-                    img.src = event.target.result;
-                };
-                reader.onerror = reject;
-                reader.readAsDataURL(file);
-            });
-        }
-
-
-        // --- UI & Local Storage Fonksiyonları ---
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            localStorage.setItem('mu_lang', lang);
-            updateUILanguage();
-            renderLogos();
-            renderAdminLogoList();
-        }
-
-        function updateUILanguage() {
-            const lang = currentLang;
-            document.querySelectorAll('[data-lang-key]').forEach(element => {
-                const key = element.getAttribute('data-lang-key');
-                if (translations[lang] && translations[lang][key]) {
-                    if (key === 'heroTitle') {
-                        element.innerHTML = translations[lang][key];
-                    } else {
-                        if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-                            if (element.hasAttribute('placeholder')) {
-                                element.placeholder = translations[lang][key];
-                            } else {
-                                element.textContent = translations[lang][key];
-                            }
-                        } else {
-                            element.textContent = translations[lang][key];
-                        }
-                    }
-                }
-            });
-
-            adminPasswordInput.placeholder = translations[lang].placeholderPassword;
-            renderCartItems(); 
-            document.documentElement.lang = lang;
-        }
-
-        function saveCart() {
-            localStorage.setItem('mu_cart', JSON.stringify(cart));
-            updateCartCount();
-            renderCartItems();
-        }
-
-        function renderLogos() {
-            logoGrid.innerHTML = ''; 
-            const lang = currentLang;
-            const buttonText = translations[lang].logoCardButton;
-
-            if (logos.length === 0) {
-                // Yalnızca yapılandırma hatası yoksa "Henüz logo eklenmedi" mesajını göster
-                if (configErrorDisplay.classList.contains('hidden')) {
-                    logoGrid.innerHTML = `<p class="text-center col-span-full text-gray-400">${translations[lang].adminNoLogo}</p>`;
-                }
-                return;
-            }
-
-            logos.forEach(logo => {
-                const logoCard = document.createElement('div');
-                logoCard.className = 'logo-card p-6 rounded-2xl glow-effect cursor-pointer transform hover:scale-105 transition-transform duration-300';
-                logoCard.innerHTML = `
-                    <!-- Ana ekranda hafif bulanık (blur-light-main) -->
-                    <img src="${logo.image}" alt="${logo.name}" class="w-full h-40 object-contain mb-4 rounded-lg bg-gray-900 p-2 border border-gray-700 blur-light-main">
-                    <h3 class="text-xl font-semibold mb-2 text-white text-center">${logo.name}</h3>
-                    <p class="text-gray-400 mb-4 text-sm text-center line-clamp-2">${logo.description}</p>
-                    <div class="flex justify-between items-center mt-4">
-                        <span class="text-2xl font-bold text-custom-blue">${logo.price.toFixed(2)} USD</span>
-                        <button class="view-details-btn px-5 py-2 bg-custom-blue text-white rounded-lg text-sm font-semibold hover:bg-custom-blue-dark transition duration-300">
-                            ${buttonText}
-                        </button>
-                    </div>
-                `;
-                logoCard.querySelector('.view-details-btn').addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    showLogoDetail(logo);
-                });
-                logoCard.addEventListener('click', () => showLogoDetail(logo));
-                logoGrid.appendChild(logoCard);
-            });
-        }
-
-        function renderAdminLogoList() {
-            adminLogoList.innerHTML = '';
-            const lang = currentLang;
-
-            if (logos.length === 0) {
-                adminLogoList.innerHTML = `<li class="text-gray-400">${translations[lang].adminNoLogo}</li>`;
-                return;
-            }
-
-            logos.forEach(logo => {
-                const listItem = document.createElement('li');
-                listItem.className = 'flex items-center justify-between bg-gray-900 p-4 rounded-lg border border-gray-700';
-                listItem.innerHTML = `
-                    <div class="flex items-center space-x-4">
-                        <img src="${logo.image}" alt="${logo.name}" class="w-12 h-12 object-contain rounded-md bg-gray-800 p-1 border border-gray-600">
-                        <div>
-                            <p class="font-semibold text-white">${logo.name}</p>
-                            <p class="text-custom-blue text-sm">${logo.price.toFixed(2)} USD</p>
-                        </div>
-                    </div>
-                    <button class="delete-logo-btn px-4 py-2 bg-red-600 text-white rounded-lg text-sm hover:bg-red-700 transition duration-300" data-id="${logo.id}">
-                        ${translations[lang].btnLogout} 
-                    </button>
-                `;
-                adminLogoList.appendChild(listItem);
-            });
-
-            document.querySelectorAll('.delete-logo-btn').forEach(button => {
-                button.addEventListener('click', async (e) => {
-                    const logoIdToDelete = e.target.dataset.id;
-                    await deleteLogoFromFirestore(logoIdToDelete);
-                });
-            });
-        }
-
-        function showLogoDetail(logo) {
-            currentSelectedLogo = logo;
-            detailImage.src = logo.image;
-            detailName.textContent = logo.name;
-            detailDescription.textContent = logo.description;
-            document.getElementById('detailPrice').textContent = logo.price.toFixed(2);
-            logoDetailModal.classList.remove('hidden'); 
-        }
-
-        function updateCartCount() {
-            if (cart.length > 0) {
-                cartCount.textContent = cart.length;
-                cartCount.classList.remove('hidden');
-            } else {
-                cartCount.classList.add('hidden');
-            }
-        }
-
-        function renderCartItems() {
-            cartItemsList.innerHTML = '';
-            let total = 0;
-            const lang = currentLang;
-
-            if (cart.length === 0) {
-                emptyCartMessage.classList.remove('hidden');
-                cartTotal.textContent = `${translations[lang].cartTotal} 0.00 USD`;
-                checkoutButton.disabled = true;
-                checkoutButton.classList.add('opacity-50', 'cursor-not-allowed');
-                return;
-            } else {
-                emptyCartMessage.classList.add('hidden');
-                checkoutButton.disabled = false;
-                checkoutButton.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-
-            cart.forEach(item => {
-                total += item.price;
-                const listItem = document.createElement('li');
-                listItem.className = 'flex items-center justify-between bg-gray-700 p-3 rounded-lg border border-gray-600';
-                listItem.innerHTML = `
-                    <div class="flex items-center space-x-3">
-                        <img src="${item.image}" alt="${item.name}" class="w-10 h-10 object-contain rounded-md bg-gray-800 p-0.5 border border-gray-500">
-                        <span class="text-white">${item.name}</span>
-                    </div>
-                    <div class="flex items-center space-x-3">
-                        <span class="text-custom-blue font-semibold">${item.price.toFixed(2)} USD</span>
-                        <button class="remove-from-cart-btn text-red-400 hover:text-red-500 text-lg" data-id="${item.cartId}">&times;</button>
-                    </div>
-                `;
-                cartItemsList.appendChild(listItem);
-            });
-
-            cartTotal.textContent = `${translations[lang].cartTotal} ${total.toFixed(2)} USD`;
-
-            document.querySelectorAll('.remove-from-cart-btn').forEach(button => {
-                button.addEventListener('click', (e) => {
-                    const itemIdToRemove = e.target.dataset.id;
-                    removeFromCart(itemIdToRemove);
-                });
-            });
-        }
-
-        function addToCart(logo) {
-            cart.push({ ...logo, cartId: Date.now().toString() });
-            saveCart();
-            const originalButtonText = translations[currentLang].btnAddToCart;
-            const addedText = translations[currentLang].addedToCart;
-
-            addToCartButton.textContent = addedText;
-            addToCartButton.classList.remove('bg-custom-blue', 'hover:bg-custom-blue-dark');
-            addToCartButton.classList.add('bg-green-600');
-            
-            setTimeout(() => {
-                addToCartButton.textContent = originalButtonText;
-                addToCartButton.classList.remove('bg-green-600');
-                addToCartButton.classList.add('bg-custom-blue', 'hover:bg-custom-blue-dark');
-                logoDetailModal.classList.add('hidden'); 
-            }, 1200);
-        }
-
-        function removeFromCart(cartId) {
-            cart = cart.filter(item => item.cartId !== cartId);
-            saveCart();
-        }
-
-        function generateWhatsAppMessage() {
-            if (cart.length === 0) return;
-
-            let message = "Merhaba MuLogo, sepetimdeki logoları sipariş etmek istiyorum:\n\n";
-            let total = 0;
-
-            cart.forEach((item, index) => {
-                message += `${index + 1}. ${item.name} - ${item.price.toFixed(2)} USD\n`;
-                total += item.price;
-            });
-
-            message += `\nToplam Tutar: ${total.toFixed(2)} USD\n\nLütfen siparişimimi tamamlamak için benimle iletişime geçin.`;
-
-            const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-            window.open(whatsappUrl, '_blank');
-            
-            cart = [];
-            saveCart();
-            cartModal.classList.add('hidden'); 
-        }
-
-        // --- Olay Dinleyicileri ---
-        
-        document.querySelectorAll('.lang-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                setLanguage(button.getAttribute('data-lang'));
-            });
-        });
-
-        whatsappButton.addEventListener('click', () => {
-             const message = "Merhaba, MuLogo'dan sizinle iletişime geçiyorum. Bir logo tasarımı veya özel bir sipariş hakkında bilgi almak istiyorum.";
-             const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-             window.open(whatsappUrl, '_blank');
-        });
-
-
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        adminFooterLink.addEventListener('click', (e) => {
-            e.preventDefault(); 
-            adminLoginModal.classList.remove('hidden'); 
-        });
-
-        adminLoginLinkMobile.addEventListener('click', () => {
-            mobileMenu.classList.add('hidden'); 
-            adminLoginModal.classList.remove('hidden'); 
-        });
-
-        loginButton.addEventListener('click', () => {
-            if (adminPasswordInput.value === ADMIN_PASSWORD) {
-                adminLoginModal.classList.add('hidden'); 
-                adminPanel.classList.remove('hidden'); 
-                loginError.classList.add('hidden');
-                adminPasswordInput.value = '';
-            } else {
-                loginError.classList.remove('hidden');
-            }
-        });
-
-        closeAdminLoginModal.addEventListener('click', () => {
-            adminLoginModal.classList.add('hidden'); 
-            loginError.classList.add('hidden');
-            adminPasswordInput.value = '';
-        });
-
-        logoutButton.addEventListener('click', () => {
-            adminPanel.classList.add('hidden'); 
-            console.log("Admin panelinden çıkış yapıldı.");
-        });
-
-        logoImageInput.addEventListener('change', (event) => {
-            const file = event.target.files[0];
-            if (file) {
-                // Önizleme için dosya okuyucu kullan
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    imagePreview.src = e.target.result;
-                    imagePreview.classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            } else {
-                imagePreview.classList.add('hidden');
-                imagePreview.src = '#';
-            }
-        });
-
-        // Logo Ekleme Formu
-        addLogoForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const file = logoImageInput.files[0];
-            
-            // Temel doğrulama
-            if (!file) {
-                console.error("Lütfen bir logo görseli seçin.");
-                return;
-            }
-            if (logoNameInput.value.trim() === '' || logoDescriptionInput.value.trim() === '') {
-                 console.error("Lütfen tüm metin alanlarını doldurun.");
-                 return;
-            }
-            if (parseFloat(logoPriceInput.value) <= 0 || isNaN(parseFloat(logoPriceInput.value))) {
-                 console.error("Lütfen geçerli bir fiyat girin.");
-                 return;
-            }
-
-            // Buton durumunu ayarla (Yükleniyor...)
-            submitLogoButton.disabled = true;
-            submitLogoButton.textContent = translations[currentLang].loading;
-
-            try {
-                // Resmi yeniden boyutlandır ve Base64'e dönüştür (1MB limitini aşmamak için)
-                // Maksimum 300x300 piksel ve %70 JPEG kalitesi kullanıldı.
-                const resizedBase64Image = await resizeImage(file, 300, 300);
-                
-                const newLogoData = {
-                    name: logoNameInput.value.trim(),
-                    description: logoDescriptionInput.value.trim(),
-                    price: parseFloat(logoPriceInput.value),
-                    image: resizedBase64Image // Küçültülmüş Base64 verisi
-                };
-                
-                const success = await addLogoToFirestore(newLogoData);
-                
-                if (success) {
-                    addLogoForm.reset(); 
-                    imagePreview.classList.add('hidden');
-                    console.log("Logo başarıyla eklendi!"); 
-                }
-                
-            } catch (error) {
-                console.error("Resim işleme veya ekleme hatası: ", error);
-            } finally {
-                // Hata olsa da olmasa da butonu eski haline getir
-                submitLogoButton.textContent = translations[currentLang].adminBtnAddLogo;
-                submitLogoButton.disabled = false;
-            }
-        });
-
-        closeDetailModal.addEventListener('click', () => {
-            logoDetailModal.classList.add('hidden'); 
-        });
-
-        addToCartButton.addEventListener('click', () => {
-            if (currentSelectedLogo) {
-                addToCart(currentSelectedLogo);
-            }
-        });
-
-        cartButton.addEventListener('click', () => {
-            cartModal.classList.remove('hidden'); 
-            renderCartItems(); 
-        });
-
-        closeCartModal.addEventListener('click', () => {
-            cartModal.classList.add('hidden'); 
-        });
-
-        checkoutButton.addEventListener('click', generateWhatsAppMessage);
-
-
-        // Sayfa yüklendiğinde başlat
-        document.addEventListener('DOMContentLoaded', () => {
-            setLanguage(currentLang); 
-            updateCartCount();
-            initializeFirebase(); // Firebase'i başlat ve logoları dinle
-        });
-    </script>
-</body>
+    <!-- SSS /FAQ section -->
+    <section class="container py-5 my-4">
+        <div class="text-center">
+            <h3 class="fw-bold">Soruların mı var?</h3>
+            <p class="fw-small" style="font-size: 10px;">Yanıtları bizde.</p>
+            <p class="fw-small" style="font-size: 13px;">
+                <a href="#" style="color:white">Destek sitemizde</a>
+                 sorularının yanıtlarını bulabilirsin.
+            </p>
+        </div>
+        <div class="accordion accordion-flush" id="accordionFlushExample">
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne" aria-expanded="false" aria-controls="flush-collapseOne">
+                    Spotify Premium teklifi nasıl işler?
+                </button>
+              </h2>
+              <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the first item's accordion body.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo" aria-expanded="false" aria-controls="flush-collapseTwo">
+                    Premium planımı nasıl iptal edebilirim?
+                </button>
+              </h2>
+              <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the second item's accordion body. Let's imagine this being filled with some actual content.</div>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <h2 class="accordion-header">
+                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                    Premium Duo planı nasıl çalışır?
+                </button>
+              </h2>
+              <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
+              </div>
+            </div>
+
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                    Premium Öğrenci planı nasıl çalışır?
+                  </button>
+                </h2>
+                <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
+                </div>
+              </div>
+
+              <div class="accordion-item">
+                <h2 class="accordion-header">
+                  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree" aria-expanded="false" aria-controls="flush-collapseThree">
+                    Spotify Premium'un Türkiye dahilindeki ücreti nedir?
+                  </button>
+                </h2>
+                <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+                  <div class="accordion-body">Placeholder content for this accordion, which is intended to demonstrate the <code>.accordion-flush</code> class. This is the third item's accordion body. Nothing more exciting happening here in terms of content, but just filling up the space to make it look, at least at first glance, a bit more representative of how this would look in a real-world application.</div>
+                </div>
+              </div>
+          </div>
+    </section>
+    
+    <!-- Footer section -->
+    <footer class="footer container-fluid bg-black p-5 row" >
+            <div class="col-6 col-md ">
+                <i class="bi bi-spotify" style="font-size:26px;"></i>
+                <h3 class="fw-bold d-inline-block">Spotify</h3>
+            </div>
+            <div class="col-6 col-md">
+                <p class="fw-bold text-secondary text-uppercase">ŞIRKET</p>
+                 <ul class="list-unstyled">
+                    <li>Hakkında</li>
+                    <li>Kariyer</li>
+                    <li>For the Record</li>
+                 </ul>
+            </div>
+            <div class="col-6 col-md">
+                <p class="fw-bold text-secondary text-uppercase">Topluluklar</p>
+                 <ul class="list-unstyled">
+                    <li>Sanatçılar İçin</li>
+                    <li>Geliştiriciler</li>
+                    <li>Reklam</li>
+                    <li>Yatırımcılar</li>
+                    <li>Satıcılar</li>
+                 </ul>
+            </div>
+            <div class="col-6 col-md">
+                <p class="fw-bold text-secondary text-uppercase">Yararlı bağlantılar</p>
+                 <ul class="list-unstyled">
+                    <li>Destek</li>
+                    <li>Web Çalar</li>
+                    <li>Ücretsiz Mobil Uygulama</li>
+                 </ul>
+            </div>
+            <div class="col-6 col-md">
+                <p class="fw-bold text-secondary text-uppercase">Spotify Planları</p>
+                 <ul class="list-unstyled">
+                    <li>Premium Bireysel</li>
+                    <li>test</li>
+                    <li>test</li>
+                    <li>test</li>
+                    <li>test</li>
+                 </ul>
+            </div>
+            <div class="col-6 col-md">
+               
+            </div>
+
+
+    </footer>
+       
+    
+    
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
 </html>
